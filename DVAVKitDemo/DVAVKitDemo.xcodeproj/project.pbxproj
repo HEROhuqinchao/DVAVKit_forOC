@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3E60616924227035000D0E64 /* password.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E60616724227034000D0E64 /* password.png */; };
 		3E60616A24227035000D0E64 /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E60616824227035000D0E64 /* user.png */; };
+		DA0111E8266E18B20022FEE8 /* DVAVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF21412E2440086400D11B08 /* DVAVKit.framework */; };
+		DA0111EB266E19140022FEE8 /* DVAVKitBundle.bundle in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = FF2141302440086400D11B08 /* DVAVKitBundle.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FF1F5BFD2440125400150FA6 /* LiveListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5BFC2440125400150FA6 /* LiveListViewController.m */; };
 		FF1F5C002440126200150FA6 /* LiveListView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5BFF2440126200150FA6 /* LiveListView.m */; };
 		FF1F5C022440126B00150FA6 /* LiveListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FF1F5C012440126B00150FA6 /* LiveListView.xib */; };
@@ -74,9 +76,6 @@
 		FF9A1FD72445C15E005B9CFE /* icon_message_error.png in Resources */ = {isa = PBXBuildFile; fileRef = FF9A1FD32445C15E005B9CFE /* icon_message_error.png */; };
 		FF9A1FD82445C15E005B9CFE /* icon_message_info.png in Resources */ = {isa = PBXBuildFile; fileRef = FF9A1FD42445C15E005B9CFE /* icon_message_info.png */; };
 		FF9A1FD92445C15E005B9CFE /* icon_message_warn.png in Resources */ = {isa = PBXBuildFile; fileRef = FF9A1FD52445C15E005B9CFE /* icon_message_warn.png */; };
-		FFA8EA562546D39200014B2B /* DVAVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF21412E2440086400D11B08 /* DVAVKit.framework */; };
-		FFA8EA572546D39200014B2B /* DVAVKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FF21412E2440086400D11B08 /* DVAVKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FFA8EA592546D3C900014B2B /* DVAVKitBundle.bundle in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = FF2141302440086400D11B08 /* DVAVKitBundle.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FFF84F3424400D9C00DD23EF /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FFF84F3224400D4700DD23EF /* libc++.tbd */; };
 		FFF84F3524400D9C00DD23EF /* libiconv.2.4.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FFF84F2E24400D3200DD23EF /* libiconv.2.4.0.tbd */; };
 		FFF84F3624400D9C00DD23EF /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FFF84F2D24400D2600DD23EF /* libbz2.1.0.tbd */; };
@@ -84,6 +83,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		DA0111E4266E18A70022FEE8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF2141282440086400D11B08 /* DVAVKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FFEE2D7E23C2D44D00022E68;
+			remoteInfo = DVAVKit;
+		};
+		DA0111E6266E18AA0022FEE8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF2141282440086400D11B08 /* DVAVKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E28391D2436574C00EC34A4;
+			remoteInfo = DVAVKitBundle;
+		};
 		FF21412D2440086400D11B08 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FF2141282440086400D11B08 /* DVAVKit.xcodeproj */;
@@ -107,7 +120,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FFA8EA572546D39200014B2B /* DVAVKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,9 +128,9 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolderSpec = 7;
 			files = (
-				FFA8EA592546D3C900014B2B /* DVAVKitBundle.bundle in Embed PlugIns */,
+				DA0111EB266E19140022FEE8 /* DVAVKitBundle.bundle in Embed PlugIns */,
 			);
 			name = "Embed PlugIns";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,11 +278,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA0111E8266E18B20022FEE8 /* DVAVKit.framework in Frameworks */,
 				FFF84F3624400D9C00DD23EF /* libbz2.1.0.tbd in Frameworks */,
 				FFF84F3424400D9C00DD23EF /* libc++.tbd in Frameworks */,
 				FFF84F3724400D9C00DD23EF /* libz.1.2.5.tbd in Frameworks */,
 				FFF84F3524400D9C00DD23EF /* libiconv.2.4.0.tbd in Frameworks */,
-				FFA8EA562546D39200014B2B /* DVAVKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,6 +821,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				DA0111E7266E18AA0022FEE8 /* PBXTargetDependency */,
+				DA0111E5266E18A70022FEE8 /* PBXTargetDependency */,
 			);
 			name = DVAVKitDemo;
 			productName = DVDataBindDemo;
@@ -957,6 +971,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DA0111E5266E18A70022FEE8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DVAVKit;
+			targetProxy = DA0111E4266E18A70022FEE8 /* PBXContainerItemProxy */;
+		};
+		DA0111E7266E18AA0022FEE8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DVAVKitBundle;
+			targetProxy = DA0111E6266E18AA0022FEE8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		FF90E1C1241F616100BCA018 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -1085,7 +1112,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0.1;
-				DEVELOPMENT_TEAM = XZPDBM94SC;
+				DEVELOPMENT_TEAM = JV9837GRRV;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DVAVKitDemo/Resource",
@@ -1115,7 +1142,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0.1;
-				DEVELOPMENT_TEAM = XZPDBM94SC;
+				DEVELOPMENT_TEAM = JV9837GRRV;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DVAVKitDemo/Resource",
