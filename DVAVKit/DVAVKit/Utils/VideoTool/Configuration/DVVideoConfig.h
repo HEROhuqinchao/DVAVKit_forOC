@@ -67,7 +67,7 @@ typedef NS_ENUM(NSUInteger, DVVideoDecoderType) {
 /// 是否是横屏
 @property (nonatomic, assign, readonly) BOOL isLandscape;
 /// 是否使用美颜滤镜
-@property (nonatomic, assign, readonly) BOOL isBeautyFilter;
+@property (nonatomic, assign) BOOL isBeautyFilter;
 
 
 #pragma mark - <-- Initializer -->

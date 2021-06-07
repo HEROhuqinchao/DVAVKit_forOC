@@ -30,6 +30,7 @@
         self.isEnableBFrame = NO;
         self.minBitRate = 600 * 1024;
         self.maxBitRate = 1800 * 1024;
+        self.isBeautyFilter = NO;
         self.encoderType = DVVideoEncoderType_H264_Hardware;
         self.decoderType = DVVideoDecoderType_H264_Hardware;
     }
