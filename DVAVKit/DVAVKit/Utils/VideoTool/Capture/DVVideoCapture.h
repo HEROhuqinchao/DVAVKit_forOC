@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "DVVideoConfig.h"
 #import "DVVideoCamera.h"
+#import "DVBFVideoCamera.h"
 #import "DVVideoError.h"
 
 NS_ASSUME_NONNULL_BEGIN

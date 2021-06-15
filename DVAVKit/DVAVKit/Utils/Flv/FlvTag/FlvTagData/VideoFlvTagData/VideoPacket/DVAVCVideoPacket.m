@@ -50,6 +50,8 @@
 
 
 #pragma mark - <-- Property -->
+/// AVCPacketType    占1个字节
+/// CompositionTime   占3个字节
 - (NSData *)fullData {
     NSMutableData *mData = [NSMutableData data];
     
@@ -57,6 +59,7 @@
     UInt32 timeStamp = (_timeStamp & 0x00ffffff) << 8;
     
     [mData appendBytes:&type length:1];
+    
     [mData appendBytes:&timeStamp length:3];
     [mData appendData:_videoData];
 

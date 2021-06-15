@@ -24,7 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)DVVideoEncoder:(id<DVVideoEncoder>)encoder
              codedData:(nullable NSData *)data
             isKeyFrame:(BOOL)isKeyFrame
-              userInfo:(nullable void *)userInfo;
+              userInfo:(nullable void *)userInfo
+                   SEI:(BOOL )sei;
 
 @end
 

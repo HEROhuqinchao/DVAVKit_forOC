@@ -391,7 +391,7 @@ void vtHEVCCompressionOutputCallback(void *outputCallbackRefCon,
                                          length:(AVCCHeaderLen + NALULen)];
         [encoder.delegate DVVideoEncoder:encoder codedData:pktData
                               isKeyFrame:isKeyFrame
-                                userInfo:sourceFrameRefCon];
+                                userInfo:sourceFrameRefCon SEI:NO];
         
         dataOffset += AVCCHeaderLen + NALULen;
     }

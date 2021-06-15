@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-
+#import <UIKit/UIKit.h>
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - <-------------------- Define -------------------->
@@ -37,6 +37,9 @@ typedef NS_ENUM(NSUInteger, DVVideoDecoderType) {
 @property(nonatomic, assign) AVCaptureDevicePosition position;
 /// 显示方向
 @property (nonatomic, assign) AVCaptureVideoOrientation orientation;
+/// 视频输出方向
+@property (nonatomic, assign) UIInterfaceOrientation outputImageOrientation;
+
 /// 帧率
 @property (nonatomic, assign) NSUInteger fps;
 /// gop 最大关键帧间隔，默认:fps 的2倍
@@ -68,6 +71,9 @@ typedef NS_ENUM(NSUInteger, DVVideoDecoderType) {
 @property (nonatomic, assign, readonly) BOOL isLandscape;
 /// 是否使用美颜滤镜
 @property (nonatomic, assign) BOOL isBeautyFilter;
+
+/// 自动旋转(这里只支持 left 变 right  portrait 变 portraitUpsideDown)
+@property (nonatomic, assign) BOOL autorotate;
 
 
 #pragma mark - <-- Initializer -->

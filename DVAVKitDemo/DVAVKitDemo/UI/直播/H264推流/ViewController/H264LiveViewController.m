@@ -39,7 +39,7 @@
     DVVideoConfig *videoConfig = [DVVideoConfig kConfig_720P_24fps];
     videoConfig.position = AVCaptureDevicePositionFront;
     videoConfig.gop = videoConfig.fps;
-    
+    videoConfig.orientation =AVCaptureVideoOrientationLandscapeRight;
     DVAudioConfig *audioConfig = [DVAudioConfig kConfig_44k_16bit_1ch];
     
     self.live = [[DVLive alloc] init];

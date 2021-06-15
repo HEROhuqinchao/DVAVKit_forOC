@@ -43,7 +43,20 @@
     return (self.orientation == AVCaptureVideoOrientationLandscapeLeft
             || self.orientation == AVCaptureVideoOrientationLandscapeRight) ? YES : NO;
 }
-
+- (UIInterfaceOrientation)outputImageOrientation
+{
+    if (self.orientation == AVCaptureVideoOrientationLandscapeLeft) {
+        return UIInterfaceOrientationLandscapeLeft;
+    }else if (self.orientation == AVCaptureVideoOrientationLandscapeRight) {
+        return UIInterfaceOrientationLandscapeRight;
+    }else if (self.orientation == AVCaptureVideoOrientationPortrait) {
+        return UIInterfaceOrientationPortrait;
+    }else if (self.orientation == AVCaptureVideoOrientationPortraitUpsideDown) {
+        return UIInterfaceOrientationPortraitUpsideDown;
+    }else{
+        return UIInterfaceOrientationUnknown;
+    }
+}
 - (CGSize)size {
     CGFloat width = 0;
     CGFloat height = 0;

@@ -47,11 +47,7 @@
 - (void)loadData {
     self.tableDataSource.models = self.listViewModel.tableItems;
     
-//    self.listView.liveURLText.text = @"rtmp://192.168.3.57:1935/live/stream";
-//    self.listView.liveURLText.text = @"rtmp://192.168.3.57:1935/live/pc";
-//    self.listView.liveURLText.text = @"rtsp://192.168.5.24:11554/chn=1/type=0";
-//    self.listView.liveURLText.text = @"rtmp://mdvr.meiligao.org:27010/live/0861585042696425_CH1_AV_LIVE";
-    self.listView.liveURLText.text = @"rtmp://meiligao.org:27010/live/0123456789012345_CH1_AV_LIVE";
+    self.listView.liveURLText.text = @"rtmp://a.1029.lcps.aodianyun.com/live/0";
 }
 
 

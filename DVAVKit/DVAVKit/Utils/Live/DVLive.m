@@ -320,11 +320,11 @@
     
     if (self.videoConfig.encoderType == DVVideoEncoderType_H264_Hardware) {
         DVAVCVideoPacket *packet = [DVAVCVideoPacket headerPacketWithSps:sps pps:pps];
-        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key avcPacket:packet];
+        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key avcPacket:packet SEI:NO];
     }
     else if (self.videoConfig.encoderType == DVVideoEncoderType_HEVC_Hardware) {
         DVHEVCVideoPacket *packet = [DVHEVCVideoPacket headerPacketWithVps:vps sps:sps pps:pps];
-        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key hevcPacket:packet];
+        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key hevcPacket:packet SEI:NO];
     }
     
     return tagData;
@@ -342,7 +342,7 @@
 
 - (DVRtmpPacket *)videoPacketWithData:(NSData *)data
                            isKeyFrame:(BOOL)isKeyFrame
-                            timeStamp:(uint64_t)timeStamp {
+                            timeStamp:(uint64_t)timeStamp SEI:(BOOL)sei{
     
     DVRtmpPacket * packet = [[DVRtmpPacket alloc] init];
     packet.timeStamp = (uint32_t)timeStamp;
@@ -351,11 +351,11 @@
     
     if (_videoConfig.encoderType == DVVideoEncoderType_H264_Hardware) {
         DVAVCVideoPacket *avcPacket = [DVAVCVideoPacket packetWithAVC:data timeStamp:0];
-        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType avcPacket:avcPacket];
+        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType avcPacket:avcPacket SEI:sei];
     }
     else if (_videoConfig.encoderType == DVVideoEncoderType_HEVC_Hardware) {
         DVHEVCVideoPacket *hevcPacket = [DVHEVCVideoPacket packetWithHEVC:data timeStamp:0];
-        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType hevcPacket:hevcPacket];
+        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType hevcPacket:hevcPacket SEI:sei];
     }
     
     return packet;
@@ -441,7 +441,7 @@
 
 #pragma mark - <-- Encoder Delegate -->
 - (void)DVVideoEncoder:(id<DVVideoEncoder>)encoder vps:(NSData *)vps sps:(NSData *)sps pps:(NSData *)pps {
-    [self printfLog:[NSString stringWithFormat:@"取得 vps:%d sps:%d  pps:%d", vps.length, sps.length, pps.length]];
+    [self printfLog:[NSString stringWithFormat:@"取得 vps:%lu sps:%lu  pps:%d", (unsigned long)vps.length, (unsigned long)sps.length, pps.length]];
         
     DVVideoFlvTagData *tagData = [self videoHeaderWithVPS:vps sps:sps pps:pps];
     if (tagData) [self.rtmpSocket setVideoHeader:tagData];
@@ -459,16 +459,17 @@
 - (void)DVVideoEncoder:(id<DVVideoEncoder>)encoder
              codedData:(NSData *)data
             isKeyFrame:(BOOL)isKeyFrame
-              userInfo:(void *)userInfo {
+              userInfo:(void *)userInfo SEI:(BOOL)sei{
     
     NSNumber *value = (__bridge NSNumber *)userInfo;
     uint64_t timeStamp = (uint64_t)[value unsignedLongLongValue];
 
-    DVRtmpPacket *packet = [self videoPacketWithData:data isKeyFrame:isKeyFrame timeStamp:timeStamp];
+    DVRtmpPacket *packet = [self videoPacketWithData:data isKeyFrame:isKeyFrame timeStamp:timeStamp SEI:sei];
+    
     [self.rtmpSocket sendPacket:packet];
 
     
-    if (isKeyFrame) [self printfLog:[NSString stringWithFormat:@"取得关键帧 -> %d", timeStamp]];
+    if (isKeyFrame) [self printfLog:[NSString stringWithFormat:@"取得关键帧 -> %llu", timeStamp]];
     
     if (self.isRecording) {
         dispatch_async(self.fileQueue, ^{

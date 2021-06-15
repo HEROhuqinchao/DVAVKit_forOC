@@ -377,11 +377,117 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         if (pktData.length > 35) {
             [encoder.delegate DVVideoEncoder:encoder codedData:pktData
                                   isKeyFrame:isKeyFrame
-                                    userInfo:sourceFrameRefCon];
+                                    userInfo:sourceFrameRefCon SEI:NO];
+
         }
-        
+        /// SEI 信息拼接
+        NSMutableData *data = [[NSMutableData alloc] init];
+        /// SEI 帧特征 - 头
+        uint8_t header[] = {0x00, 0x00, 0x00, 0x01, 0x06, 0x05};
+        [data appendBytes:header length:6];
+        /// 标识后面自定义包体长度  -- 默认33位
+        NSString * packetLength = [encoder getHexByDecimal:33];
+        NSData  *customLength =  [encoder convertHexStrToData:packetLength];
+        [data appendData:customLength];
+        /// 是16 字节的 uuid 固定不变
+        uint8_t uuid[] = {0x6c, 0x63, 0x70, 0x73, 0x62, 0x35, 0x64, 0x61, 0x39, 0x66, 0x34, 0x36, 0x35, 0x64, 0x33, 0x66};
+        [data appendBytes:uuid length:16];
+        /// 标识此扩展的子分类 帧同步固定为 01
+        uint8_t type[] = {0x01};
+        [data appendBytes:type length:1];
+        /// 分类信息体长度--此时默认15-时间字符串形式-「210615112934112」--表示 21年06月15号11时29分34秒112毫秒
+        uint8_t length[] = {0x0f};
+        [data appendBytes:length length:1];
+        /// 信息体 --是时间字符串表示形式，例如 20年06月24日14时15分30秒123毫秒
+        NSData *seiMsg=[NSMutableData dataWithData:[[encoder getTime] dataUsingEncoding:NSUTF8StringEncoding]];
+        [data appendData:seiMsg];
+        /// SEI 帧特征 - 尾
+        uint8_t tail[] = {0x80};
+        [data appendBytes:tail length:1];
+        [encoder.delegate DVVideoEncoder:encoder codedData:data
+                              isKeyFrame:isKeyFrame
+                                userInfo:sourceFrameRefCon SEI:YES];
         dataOffset += AVCCHeaderLen + NALULen;
     }
 }
+#pragma mark -----Public
+-(NSString *)getTime{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    // 设置想要的格式，hh与HH的区别:分别表示12小时制,24小时制
+    [formatter setDateFormat:@"YYMMddHHmmssSSS"];
+    NSDate *dateNow = [NSDate date];
+    //把NSDate按formatter格式转成NSString
+    NSString *currentTime = [formatter stringFromDate:dateNow];
+    return currentTime;
+    
+}
 
+/**
+ 十进制转换十六进制
+ 
+ @param decimal 十进制数
+ @return 十六进制数
+ */
+- (NSString *)getHexByDecimal:(NSInteger)decimal {
+    
+    NSString *hex =@"";
+    NSString *letter;
+    NSInteger number;
+    for (int i = 0; i<9; i++) {
+        
+        number = decimal % 16;
+        decimal = decimal / 16;
+        switch (number) {
+                
+            case 10:
+                letter =@"A"; break;
+            case 11:
+                letter =@"B"; break;
+            case 12:
+                letter =@"C"; break;
+            case 13:
+                letter =@"D"; break;
+            case 14:
+                letter =@"E"; break;
+            case 15:
+                letter =@"F"; break;
+            default:
+                letter = [NSString stringWithFormat:@"%ld", number];
+        }
+        hex = [letter stringByAppendingString:hex];
+        if (decimal == 0) {
+            
+            break;
+        }
+    }
+    return hex;
+}
+- (NSData *)convertHexStrToData:(NSString *)str {
+    if (!str || [str length] == 0) {
+        return nil;
+    }
+    
+    NSMutableData *hexData = [[NSMutableData alloc] initWithCapacity:8];
+    NSRange range;
+    if ([str length] % 2 == 0) {
+        range = NSMakeRange(0, 2);
+    } else {
+        range = NSMakeRange(0, 1);
+    }
+    for (NSInteger i = range.location; i < [str length]; i += 2) {
+        unsigned int anInt;
+        NSString *hexCharStr = [str substringWithRange:range];
+        NSScanner *scanner = [[NSScanner alloc] initWithString:hexCharStr];
+        
+        [scanner scanHexInt:&anInt];
+        NSData *entity = [[NSData alloc] initWithBytes:&anInt length:1];
+        [hexData appendData:entity];
+        
+        range.location += range.length;
+        range.length = 2;
+    }
+    
+    NSLog(@"hexdata: %@", hexData);
+    return hexData;
+}
 @end
