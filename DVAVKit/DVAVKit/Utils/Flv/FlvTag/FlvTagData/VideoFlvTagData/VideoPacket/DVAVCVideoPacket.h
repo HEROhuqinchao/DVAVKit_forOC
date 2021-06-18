@@ -37,11 +37,11 @@ typedef NS_ENUM(UInt8, DVAVCVideoPacketType) {
 @property(nonatomic, strong, readonly) NSData *videoData;
 
 @property(nonatomic, strong, readonly) NSData *fullData;
-
+@property(nonatomic, assign, readonly) BOOL sei;
 
 #pragma mark - <-- Initializer -->
 + (instancetype)headerPacketWithSps:(NSData *)sps pps:(NSData *)pps;
-+ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp;
++ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp SEI:(BOOL)sei;
 + (instancetype)endPacket;
 
 @end

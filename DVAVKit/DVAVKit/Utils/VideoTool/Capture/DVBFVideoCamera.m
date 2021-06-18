@@ -98,7 +98,6 @@
 - (void)setRunning:(BOOL)running {
     if (_running == running) return;
     _running = running;
-    
     if (!_running) {
         [UIApplication sharedApplication].idleTimerDisabled = NO;
         [self.videoCamera stopCameraCapture];
@@ -154,12 +153,10 @@
 //停止录制-附有回调
 - (void)stopRecordingWithCompletionHandler:(void (^)(void))completionHandler
 {
-    
     if (self.saveLocalVideo == NO) {
         return;
     }
     self.saveLocalVideo = NO;
-    
     __weak typeof(self) _self = self;
     [self.movieWriter finishRecordingWithCompletionHandler:^ {
         // 添加水印
@@ -173,9 +170,7 @@
             completionHandler();
         }
     }];
-    
 }
-
 
 - (void)setPreView:(UIView *)preView {
     if (self.gpuImageView.superview) [self.gpuImageView removeFromSuperview];
@@ -365,18 +360,7 @@
 }
 
 #pragma mark -- Custom Method
-- (void)processVideo:(GPUImageOutput *)output {
-    __weak typeof(self) _self = self;
-    @autoreleasepool {
-        GPUImageFramebuffer *imageFramebuffer = output.framebufferForOutput;
-        CVPixelBufferRef pixelBuffer = [imageFramebuffer pixelBuffer];
-        if (pixelBuffer && _self.delegate && [_self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
-            [_self.delegate captureOutput:_self pixelBuffer:pixelBuffer isBeauty:NO];
-        }
-    }
-}
-#pragma  mark setTouchZoomScale 更改焦距
-
+///  setTouchZoomScale 更改焦距
 -(void)handleDoubleClickAction:(UIPinchGestureRecognizer *)recognizer{
     CGPoint  point = [recognizer locationInView:recognizer.view];
     [self.focusView frameByAnimationCenter:point];
@@ -519,30 +503,10 @@
     __weak typeof(self) weakSelf = self;
     _gpuOutput.pixelBufferCallback = ^(CVPixelBufferRef  _Nullable pixelBufferRef) {
         
-        if (pixelBufferRef && weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
-            [weakSelf.delegate captureOutput:weakSelf pixelBuffer:pixelBufferRef isBeauty:NO];
-        }
-    };
-    
-    
-    
-    ///< 输出数据
-///
-//    __weak __typeof(self)weakSelf = self;
-//    [self.output setFrameProcessingCompletionBlock:^(GPUImageOutput *output, CMTime time) {
-//        __strong __typeof(weakSelf)strongSelf = weakSelf;
-//        [strongSelf processVideo:output];
-//        @autoreleasepool {
-//
-//            GPUImageFramebuffer *imageFramebuffer = output.framebufferForOutput;
-//            CVPixelBufferRef pixelBuffer = [imageFramebuffer pixelBuffer];
-//            if (pixelBuffer && strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
-//                [strongSelf.delegate captureOutput:strongSelf pixelBuffer:pixelBuffer isBeauty:NO];
-//            }
+//        if (pixelBufferRef && weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
+//            [weakSelf.delegate captureOutput:weakSelf pixelBuffer:pixelBufferRef isBeauty:NO];
 //        }
-
-//    }];
-    
+    };
 }
 
 - (void)reloadMirror{
@@ -591,9 +555,9 @@
 
 - (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer{
     CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
-    if (pixelBuffer && self.delegate && [self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
-        [self.delegate captureOutput:self pixelBuffer:pixelBuffer isBeauty:YES];
-    }
+//    if (pixelBuffer && self.delegate && [self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
+//        [self.delegate captureOutput:self pixelBuffer:pixelBuffer isBeauty:YES];
+//    }
 }
 
 @end

@@ -13,7 +13,7 @@
 @property(nonatomic, assign, readwrite) DVAVCVideoPacketType packetType;
 @property(nonatomic, assign, readwrite) UInt32 timeStamp;
 @property(nonatomic, strong, readwrite) NSData *videoData;
-
+@property(nonatomic, assign, readwrite) BOOL sei;
 @end
 
 @implementation DVAVCVideoPacket
@@ -33,8 +33,9 @@
     return packet;
 }
 
-+ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp {
++ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp SEI:(BOOL)sei{
     DVAVCVideoPacket *packet = [[DVAVCVideoPacket alloc] init];
+    packet.sei = sei;
     packet.packetType = DVAVCVideoPacketType_AVC;
     packet.timeStamp = timeStamp;
     packet.videoData = avcData;
@@ -52,17 +53,14 @@
 #pragma mark - <-- Property -->
 /// AVCPacketType    占1个字节
 /// CompositionTime   占3个字节
+/// 此处 是添加： 01 00 00 00
 - (NSData *)fullData {
     NSMutableData *mData = [NSMutableData data];
-    
     UInt8 type = _packetType;
     UInt32 timeStamp = (_timeStamp & 0x00ffffff) << 8;
-    
     [mData appendBytes:&type length:1];
-    
     [mData appendBytes:&timeStamp length:3];
     [mData appendData:_videoData];
-
     return [mData copy];
 }
 
@@ -74,7 +72,6 @@
     const UInt8 *ppsBytes = pps.bytes;
     const NSUInteger spsLen = sps.length;
     const NSUInteger ppsLen = pps.length;
-    
     int index = 0;
     int len = 11 + (int)spsLen + (int)ppsLen;
     
@@ -89,8 +86,10 @@
     
     body[index++] = 0xe1; // numOfSequenceParameterSets: sps个数 -> 111x xxxx
                           // x xxxx = numOfSequenceParameterSets & 0x1f
+    
     body[index++] = (spsLen >> 8) & 0xff;  // sequenceParameterSetLength 2Bytes
     body[index++] = spsLen & 0xff;
+    
     memcpy(&body[index], spsBytes, spsLen); // sequenceParameterSetNALUnits : sps内容
     index += spsLen;
     

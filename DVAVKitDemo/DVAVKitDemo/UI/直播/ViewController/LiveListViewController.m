@@ -48,6 +48,8 @@
     self.tableDataSource.models = self.listViewModel.tableItems;
     
     self.listView.liveURLText.text = @"rtmp://a.1029.lcps.aodianyun.com/live/0";
+//    self.listView.liveURLText.text = @"rtmp://1011.lsspublish.aodianyun.com/demo/test8";
+
 }
 
 

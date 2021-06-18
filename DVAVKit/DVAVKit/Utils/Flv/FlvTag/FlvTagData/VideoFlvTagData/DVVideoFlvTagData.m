@@ -25,20 +25,21 @@
                            avcPacket:(DVAVCVideoPacket *)packet  SEI:(BOOL)sei{
     
     DVVideoFlvTagData *tagData = [[DVVideoFlvTagData alloc] init];
+    tagData.sei = sei;
     tagData.frameType = frameType;
     tagData.codecIDType = DVVideoFlvTagCodecIDType_AVC;
     tagData.packetData = packet.fullData;
-    tagData.sei = sei;
     return tagData;
 }
 
 + (instancetype)tagDataWithFrameType:(DVVideoFlvTagFrameType)frameType
                           hevcPacket:(DVHEVCVideoPacket *)packet  SEI:(BOOL)sei{
     DVVideoFlvTagData *tagData = [[DVVideoFlvTagData alloc] init];
+    tagData.sei = sei;
     tagData.frameType = frameType;
     tagData.codecIDType = DVVideoFlvTagCodecIDType_HEVC;
     tagData.packetData = packet.fullData;
-    tagData.sei = sei;
+    
     return tagData;
 }
 
@@ -46,14 +47,13 @@
 #pragma mark - <-- Property -->
 - (NSData *)fullData {
     NSMutableData *mData = [NSMutableData data];
-    if (_sei) {
-        [mData appendData:self.packetData];
-        return [mData copy];
-    }
+    /**
+     // 1:Iframe  7:AVC
+     // 2:Pframe  7:AVC
+     */
     UInt8 header = (_frameType << 4) | _codecIDType;
     [mData appendBytes:&header length:1];
     [mData appendData:self.packetData];
-    
     return [mData copy];
 }
 

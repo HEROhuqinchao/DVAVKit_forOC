@@ -373,9 +373,9 @@
 
     if(self.camera.isAutoRotate){
         if (self.camera.isLandscape) {
-            self.camera.orientation = (statusBar == UIInterfaceOrientationLandscapeLeft) ? UIInterfaceOrientationLandscapeRight : UIInterfaceOrientationLandscapeLeft;
+            self.camera.orientation = (statusBar == UIInterfaceOrientationLandscapeLeft) ? AVCaptureVideoOrientationLandscapeRight : AVCaptureVideoOrientationLandscapeLeft;
         } else {
-            self.camera.orientation = (statusBar == UIInterfaceOrientationPortrait) ? UIInterfaceOrientationPortraitUpsideDown : UIInterfaceOrientationPortrait;
+            self.camera.orientation = (statusBar == UIInterfaceOrientationPortrait) ? AVCaptureVideoOrientationPortraitUpsideDown : AVCaptureVideoOrientationPortrait;
         }
     }
 }

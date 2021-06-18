@@ -116,12 +116,9 @@
 #pragma mark - <-- Delegate -->
 - (NSData *)fullData {
     NSMutableData *mData = [NSMutableData data];
-    
     NSString *metaAMF = @"onMetaData";
-    
     [mData appendData:metaAMF.amfData];
     [mData appendData:self.mDict.amfData];
-    
     return [mData copy];
 }
 

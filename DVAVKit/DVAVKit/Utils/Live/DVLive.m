@@ -18,7 +18,10 @@
                        DVAudioEncoderDelegate,
                        DVRtmpDelegate,
                        DVRtmpBufferDelegate>
-
+{
+    
+    double time;
+}
 @property(nonatomic, strong, readwrite) DVVideoConfig *videoConfig;
 @property(nonatomic, strong, readwrite) DVAudioConfig *audioConfig;
 
@@ -51,6 +54,7 @@
         [self initLock];
         [self initSession];
         [self initRtmpSocket];
+        time = 0.0;
     }
     return self;
 }
@@ -197,7 +201,7 @@
     
     // 1.初始化录音
     if (!self.audioUnit) {
-        AudioComponentDescription desc = [DVAudioComponentDesc kComponentDesc_Output_IO];
+        AudioComponentDescription desc = [DVAudioComponentDesc kComponentDesc_Output_VPIO];
         NSError *error = nil;
         self.audioUnit = [[DVAudioUnit alloc] initWithComponentDesc:desc
                                                            delegate:self
@@ -350,7 +354,7 @@
     DVVideoFlvTagFrameType frameType = isKeyFrame ? DVVideoFlvTagFrameType_Key : DVVideoFlvTagFrameType_NotKey;
     
     if (_videoConfig.encoderType == DVVideoEncoderType_H264_Hardware) {
-        DVAVCVideoPacket *avcPacket = [DVAVCVideoPacket packetWithAVC:data timeStamp:0];
+        DVAVCVideoPacket *avcPacket = [DVAVCVideoPacket packetWithAVC:data timeStamp:0 SEI:sei];
         packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType avcPacket:avcPacket SEI:sei];
     }
     else if (_videoConfig.encoderType == DVVideoEncoderType_HEVC_Hardware) {
@@ -426,6 +430,12 @@
     
     if (self.videoEncoder && !error) {
         NSNumber *timeStampNum = [NSNumber numberWithUnsignedLongLong:RTMP_TIMESTAMP_NOW];
+        if (time == 0.0) {
+            time = RTMP_TIMESTAMP_NOW;
+        }
+        double   interval = RTMP_TIMESTAMP_NOW - time;
+        time = RTMP_TIMESTAMP_NOW;
+//        NSLog(@"视频输出间隔-采集：%f",interval);
         [self.videoEncoder encodeVideoBuffer:sampleBuffer userInfo:(__bridge void *)timeStampNum];
     }
 }
@@ -441,7 +451,7 @@
 
 #pragma mark - <-- Encoder Delegate -->
 - (void)DVVideoEncoder:(id<DVVideoEncoder>)encoder vps:(NSData *)vps sps:(NSData *)sps pps:(NSData *)pps {
-    [self printfLog:[NSString stringWithFormat:@"取得 vps:%lu sps:%lu  pps:%d", (unsigned long)vps.length, (unsigned long)sps.length, pps.length]];
+    [self printfLog:[NSString stringWithFormat:@"取得 vps:%lu sps:%lu  pps:%lu", (unsigned long)vps.length, (unsigned long)sps.length, (unsigned long)pps.length]];
         
     DVVideoFlvTagData *tagData = [self videoHeaderWithVPS:vps sps:sps pps:pps];
     if (tagData) [self.rtmpSocket setVideoHeader:tagData];
@@ -463,7 +473,7 @@
     
     NSNumber *value = (__bridge NSNumber *)userInfo;
     uint64_t timeStamp = (uint64_t)[value unsignedLongLongValue];
-
+    
     DVRtmpPacket *packet = [self videoPacketWithData:data isKeyFrame:isKeyFrame timeStamp:timeStamp SEI:sei];
     
     [self.rtmpSocket sendPacket:packet];
@@ -550,7 +560,7 @@
     }
     
     NSUInteger kbs = self.videoEncoder.bitRate / 1024;
-    [self printfLog:[NSString stringWithFormat:@"码率: %d kb/s", kbs]];
+    [self printfLog:[NSString stringWithFormat:@"码率: %lu kb/s", (unsigned long)kbs]];
 }
 
 - (void)DVRtmpBuffer:(DVRtmpBuffer *)rtmpBuffer

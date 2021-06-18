@@ -74,7 +74,7 @@
                                                  NULL,                        // 源像素的缓冲区
                                                  NULL,                        // 压缩数据分配器
                                                  vtH264CompressionOutputCallback, // 回调函数
-                                                 (__bridge void *)(self),     // 回调函数引用
+                                                 (__bridge void * _Nullable)(self),     // 回调函数引用
                                                  &_sessionRef);               // 编码会话对象引用
     
     if (status != noErr) {
@@ -84,12 +84,12 @@
     }
     
     self.isRealTime = YES;
-    self.profileLevel = kVTProfileLevel_H264_Main_AutoLevel;
+    self.profileLevel = kVTProfileLevel_H264_Main_AutoLevel;   // 指定编码比特流的配置文件和级别。直播一般使用baseline，可减少由于b帧带来的延时
     self.fps = self.config.fps;
     self.gop = self.config.gop;
     self.bitRate = self.config.bitRate;
     self.isEnableBFrame = self.config.isEnableBFrame;
-    self.entropyMode = kVTH264EntropyMode_CABAC;
+    self.entropyMode = kVTH264EntropyMode_CABAC;// 设置H264的编码模式
     
     VTCompressionSessionPrepareToEncodeFrames(_sessionRef);
     NSLog(@"[DVVideoH264HardwareEncoder LOG]: 编码器已初始化");
@@ -303,10 +303,7 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
     CFDictionaryRef dict = CFArrayGetValueAtIndex(attachArray, 0);
     if (!dict) return;
     BOOL isKeyFrame = !CFDictionaryContainsKey(dict, kCMSampleAttachmentKey_NotSync);
-    
-    
-    
-    
+
     // 获取sps & pps数据
     if (isKeyFrame) {
         do {
@@ -342,7 +339,6 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
             }
             
             
-            
             NSData *spsData = [NSData dataWithBytes:sps length:spsSize];
             NSData *ppsData = [NSData dataWithBytes:pps length:ppsSize];
             [encoder.delegate DVVideoEncoder:encoder vps:nil sps:spsData pps:ppsData];
@@ -375,20 +371,21 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         
         // 不知道为什么会编码出长度为35的数据
         if (pktData.length > 35) {
+            /// 发送视频原始数据
             [encoder.delegate DVVideoEncoder:encoder codedData:pktData
                                   isKeyFrame:isKeyFrame
                                     userInfo:sourceFrameRefCon SEI:NO];
 
         }
+        
         /// SEI 信息拼接
         NSMutableData *data = [[NSMutableData alloc] init];
         /// SEI 帧特征 - 头
-        uint8_t header[] = {0x00, 0x00, 0x00, 0x01, 0x06, 0x05};
-        [data appendBytes:header length:6];
+        uint8_t header6[] = {0x06, 0x05};
+        [data appendBytes:header6 length:2];
         /// 标识后面自定义包体长度  -- 默认33位
-        NSString * packetLength = [encoder getHexByDecimal:33];
-        NSData  *customLength =  [encoder convertHexStrToData:packetLength];
-        [data appendData:customLength];
+        uint8_t customLength[] = {0x21};
+        [data appendBytes:customLength length:1];
         /// 是16 字节的 uuid 固定不变
         uint8_t uuid[] = {0x6c, 0x63, 0x70, 0x73, 0x62, 0x35, 0x64, 0x61, 0x39, 0x66, 0x34, 0x36, 0x35, 0x64, 0x33, 0x66};
         [data appendBytes:uuid length:16];
@@ -404,9 +401,26 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         /// SEI 帧特征 - 尾
         uint8_t tail[] = {0x80};
         [data appendBytes:tail length:1];
-        [encoder.delegate DVVideoEncoder:encoder codedData:data
-                              isKeyFrame:isKeyFrame
-                                userInfo:sourceFrameRefCon SEI:YES];
+        NSInteger i = 0;
+        NSInteger rtmpLength = data.length + 4;
+        unsigned char *body = (unsigned char *)malloc(rtmpLength);
+        /// 取出视频原始数据长度
+        body[i++] = (data.length >> 24) & 0xff;
+        body[i++] = (data.length >> 16) & 0xff;
+        body[i++] = (data.length >>  8) & 0xff;
+        body[i++] = (data.length) & 0xff;
+        memcpy(&body[i], data.bytes, data.length);
+        NSData *seiData = [NSData dataWithBytes:body length:rtmpLength];
+        
+        NSMutableData *videoData = [[NSMutableData alloc] init];
+        /// 拼接视频原始数据
+        [videoData appendData:seiData];
+        [videoData appendData:pktData];
+
+        //isKeyFrame ? videoData : pktData
+//        [encoder.delegate DVVideoEncoder:encoder codedData: pktData
+//                              isKeyFrame:isKeyFrame
+//                                userInfo:sourceFrameRefCon SEI:isKeyFrame?YES:NO];
         dataOffset += AVCCHeaderLen + NALULen;
     }
 }
@@ -429,16 +443,13 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
  @return 十六进制数
  */
 - (NSString *)getHexByDecimal:(NSInteger)decimal {
-    
     NSString *hex =@"";
     NSString *letter;
     NSInteger number;
     for (int i = 0; i<9; i++) {
-        
         number = decimal % 16;
         decimal = decimal / 16;
         switch (number) {
-                
             case 10:
                 letter =@"A"; break;
             case 11:
@@ -452,11 +463,10 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
             case 15:
                 letter =@"F"; break;
             default:
-                letter = [NSString stringWithFormat:@"%ld", number];
+                letter = [NSString stringWithFormat:@"%ld", (long)number];
         }
         hex = [letter stringByAppendingString:hex];
         if (decimal == 0) {
-            
             break;
         }
     }

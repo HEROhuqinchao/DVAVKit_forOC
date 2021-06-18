@@ -14,7 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @class DVBFVideoCamera;
 /** ADYGPUImageVideoCapture callback videoData - 视频数据处理回调*/
 @protocol DVBFVideoCameraDelegate <NSObject>
-- (void)captureOutput:(nullable DVBFVideoCamera *)capture pixelBuffer:(nullable CVPixelBufferRef)pixelBuffer isBeauty:(BOOL)isBeauty;
+- (void)DVVideoCapture:(DVBFVideoCamera *)capture
+    outputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+                isBeauty:(BOOL)isBeauty;
+
 @end
 
 @interface DVBFVideoCamera : NSObject
