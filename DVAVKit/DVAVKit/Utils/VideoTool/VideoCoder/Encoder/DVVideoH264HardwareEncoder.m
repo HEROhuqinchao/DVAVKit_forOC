@@ -84,7 +84,7 @@
     }
     
     self.isRealTime = YES;
-    self.profileLevel = kVTProfileLevel_H264_Main_AutoLevel;   // 指定编码比特流的配置文件和级别。直播一般使用baseline，可减少由于b帧带来的延时
+    self.profileLevel = kVTProfileLevel_H264_Baseline_AutoLevel;   // 指定编码比特流的配置文件和级别。直播一般使用baseline，可减少由于b帧带来的延时
     self.fps = self.config.fps;
     self.gop = self.config.gop;
     self.bitRate = self.config.bitRate;
@@ -337,8 +337,12 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
                 VideoCheckStatus(ppsStatus, @"获取 pps error");
                 break;
             }
-            
-            
+            /**
+             Printing description of spsData:
+             <2742001f ab402802 dd370202 0202>
+             Printing description of ppsData:
+             <28ce3c30>
+             */
             NSData *spsData = [NSData dataWithBytes:sps length:spsSize];
             NSData *ppsData = [NSData dataWithBytes:pps length:ppsSize];
             [encoder.delegate DVVideoEncoder:encoder vps:nil sps:spsData pps:ppsData];
@@ -366,15 +370,15 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         memcpy(&NALULen, dataPointer + dataOffset, AVCCHeaderLen);
         NALULen = CFSwapInt32BigToHost(NALULen); // 大端模式帧长度 转换为 系统端
          
-        NSData *pktData = [NSData dataWithBytes:(dataPointer + dataOffset)
-                                         length:(AVCCHeaderLen + NALULen)];
+        NSData *pktData = [NSData dataWithBytes:(dataPointer + dataOffset + AVCCHeaderLen)
+                                         length:NALULen];
         
         // 不知道为什么会编码出长度为35的数据
         if (pktData.length > 35) {
             /// 发送视频原始数据
-            [encoder.delegate DVVideoEncoder:encoder codedData:pktData
-                                  isKeyFrame:isKeyFrame
-                                    userInfo:sourceFrameRefCon SEI:NO];
+//            [encoder.delegate DVVideoEncoder:encoder codedData:pktData
+//                                  isKeyFrame:isKeyFrame
+//                                    userInfo:sourceFrameRefCon SEI:NO];
 
         }
         
@@ -401,6 +405,11 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         /// SEI 帧特征 - 尾
         uint8_t tail[] = {0x80};
         [data appendBytes:tail length:1];
+//        uint8_t heard[] = {0x00, 0x00, 0x00, 0x01};
+//        [data appendBytes:heard length:4];
+//        [data appendData:pktData];
+        
+        
         NSInteger i = 0;
         NSInteger rtmpLength = data.length + 4;
         unsigned char *body = (unsigned char *)malloc(rtmpLength);
@@ -412,15 +421,26 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         memcpy(&body[i], data.bytes, data.length);
         NSData *seiData = [NSData dataWithBytes:body length:rtmpLength];
         
-        NSMutableData *videoData = [[NSMutableData alloc] init];
-        /// 拼接视频原始数据
-        [videoData appendData:seiData];
-        [videoData appendData:pktData];
-
-        //isKeyFrame ? videoData : pktData
-//        [encoder.delegate DVVideoEncoder:encoder codedData: pktData
-//                              isKeyFrame:isKeyFrame
-//                                userInfo:sourceFrameRefCon SEI:isKeyFrame?YES:NO];
+        NSInteger j = 0;
+        NSInteger rtmpLength2 = pktData.length + 4;
+        unsigned char *body2 = (unsigned char *)malloc(rtmpLength2);
+        /// 取出视频原始数据长度
+        body2[j++] = (pktData.length >> 24) & 0xff;
+        body2[j++] = (pktData.length >> 16) & 0xff;
+        body2[j++] = (pktData.length >>  8) & 0xff;
+        body2[j++] = (pktData.length) & 0xff;
+        memcpy(&body2[j], pktData.bytes, pktData.length);
+        NSData *vioData = [NSData dataWithBytes:body2 length:rtmpLength2];
+        
+        NSMutableData *dataVideo = [[NSMutableData alloc] init];
+        [dataVideo appendData:seiData];
+        [dataVideo appendData:vioData];
+        if (pktData.length > 35) {
+            //        isKeyFrame ? seiData : pktData
+            [encoder.delegate DVVideoEncoder:encoder codedData: dataVideo
+                                  isKeyFrame:isKeyFrame
+                                    userInfo:sourceFrameRefCon SEI:isKeyFrame?YES:NO];
+        }
         dataOffset += AVCCHeaderLen + NALULen;
     }
 }

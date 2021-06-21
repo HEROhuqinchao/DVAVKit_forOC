@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSUInteger gop;
 /// 码率, 默认:DVVideoConfig -> bitRate
 @property (nonatomic, assign) NSUInteger bitRate;
-/// 是否产生B帧, 默认:DVVideoConfig -> isEnableBFrame
+/// 是否产生B帧, 默认:DVVideoConfig -> isEnableBFrame 不产生B帧
 @property(nonatomic, assign) BOOL isEnableBFrame;
 /// 熵模式, 默认:kVTH264EntropyMode_CABAC
 @property(nonatomic, assign) CFStringRef entropyMode;

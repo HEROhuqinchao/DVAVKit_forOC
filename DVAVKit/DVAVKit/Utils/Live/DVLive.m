@@ -201,7 +201,7 @@
     
     // 1.初始化录音
     if (!self.audioUnit) {
-        AudioComponentDescription desc = [DVAudioComponentDesc kComponentDesc_Output_VPIO];
+        AudioComponentDescription desc = [DVAudioComponentDesc kComponentDesc_Output_IO];
         NSError *error = nil;
         self.audioUnit = [[DVAudioUnit alloc] initWithComponentDesc:desc
                                                            delegate:self

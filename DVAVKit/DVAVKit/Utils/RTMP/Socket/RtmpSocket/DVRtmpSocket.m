@@ -236,8 +236,7 @@
         }
         
         weakSelf.isSending = YES;
-        
-        
+
         DVRtmpPacket *packet = [weakSelf.buffer popBuffer];
         
         int ret = 0;
