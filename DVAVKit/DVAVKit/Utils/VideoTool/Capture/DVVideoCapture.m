@@ -85,14 +85,23 @@
     // 3.初始化输出
     self.videoQueue = dispatch_queue_create("com.queue.videoOutput", DISPATCH_QUEUE_SERIAL);
     self.videoOutput = [[AVCaptureVideoDataOutput alloc] init];
+   
+    NSDictionary *videoSetting = [NSDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange], kCVPixelBufferPixelFormatTypeKey, nil];
+    [self.videoOutput setVideoSettings:videoSetting];
     [self.videoOutput setSampleBufferDelegate:self queue:self.videoQueue];
-    self.videoOutput.videoSettings = @{(id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange]};
-    
+    self.videoOutput.alwaysDiscardsLateVideoFrames = YES;
     // 4.初始化会话,添加输入输出
     self.session = [[AVCaptureSession alloc] init];
+    self.session.usesApplicationAudioSession = NO;
+    
     [self.session beginConfiguration];
     if ([self.session canAddInput:self.videoInput]) {
         [self.session addInput:self.videoInput];
+        //防抖功能
+//        AVCaptureConnection *captureConnection = [_captureMovieFileOutput connectionWithMediaType:AVMediaTypeAudio];
+//        if ([captureConnection isVideoStabilizationSupported]) {
+//            captureConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+//        }
     }
     if ([self.session canAddOutput:self.videoOutput]) {
         [self.session addOutput:self.videoOutput];
@@ -131,6 +140,7 @@
     if (_preViewLayer == nil) {
         _preViewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
         _preViewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        _preViewLayer.connection.videoOrientation = self.config.orientation;
     }
     return _preViewLayer;
 }
@@ -162,8 +172,18 @@
 #pragma mark - <-- Private Method -->
 - (AVCaptureDevice *)getCameraWithPosition:(AVCaptureDevicePosition)position {
     AVCaptureDevice *device = nil;
-    NSArray<AVCaptureDevice *> *devices = [AVCaptureDevice devicesWithMediaType: AVMediaTypeVideo];
-       
+    NSArray<AVCaptureDevice *> *devices;
+
+    if (@available(iOS 10.0, *)) {
+        AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession =  [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
+        devices = captureDeviceDiscoverySession.devices;
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
+    }
+    
     for (AVCaptureDevice *tempDevice in devices) {
         if ([tempDevice position] == position) {
             device = tempDevice;
@@ -222,10 +242,14 @@
         NSLog(@"[DVVideoCapture ERROR]: 摄像头已经开启");
         return;
     }
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
+    });
+    
     __weak __typeof(self)weakSelf = self;
     dispatch_async(self.videoQueue, ^{
         [weakSelf.session startRunning];
+        
     });
 }
 
@@ -234,10 +258,13 @@
         NSLog(@"[DVVideoCapture ERROR]: 摄像头已经关闭");
         return;
     }
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+    });
     __weak __typeof(self)weakSelf = self;
     dispatch_async(self.videoQueue, ^{
         [weakSelf.session stopRunning];
+        
     });
 }
 
@@ -317,12 +344,14 @@
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                        fromConnection:(AVCaptureConnection *)connection {
     if (self.delegate) {
+//        NSLog(@"获取采集数据，开始编码");
         [self.delegate DVVideoCapture:self outputSampleBuffer:sampleBuffer error:nil];
     }
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                      fromConnection:(AVCaptureConnection *)connection {
+    NSLog(@"丢弃采集数据");
     if (self.delegate) {
         DVVideoError *error = [DVVideoError errorWithType:DVVideoError_DropSample];
         [self.delegate DVVideoCapture:self outputSampleBuffer:sampleBuffer error:error];

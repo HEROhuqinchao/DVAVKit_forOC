@@ -15,7 +15,25 @@
 #import "rtmp.h"
 #endif
 
-
+//#define SAVC(x)    static const AVal av_ ## x = AVC(#x)
+//static const AVal av_setDataFrame = AVC("@setDataFrame");
+//static const AVal av_SDKVersion = AVC("ADYLiveSDK 2.4.0");
+//SAVC(onMetaData);
+//SAVC(duration);
+//SAVC(fileSize);
+//SAVC(width);
+//SAVC(height);
+//SAVC(avc1);
+//SAVC(videocodecid);
+//SAVC(videodatarate);
+//SAVC(framerate);
+//SAVC(audiocodecid);
+//SAVC(mp4a);
+//SAVC(audiodatarate);
+//SAVC(audiosamplerate);
+//SAVC(audiosamplesize);
+//SAVC(stereo);
+//SAVC(encoder);
 @interface DVRtmpSocket () {
     @private
     PILI_RTMP *_rtmp;
@@ -367,10 +385,60 @@
 }
 
 - (int)RTMP_SendMetaPacket:(u_char *)data size:(uint32_t)size {
+//    PILI_RTMPPacket packet;
+//
+//    char pbuf[2048], *pend = pbuf + sizeof(pbuf);
+//
+//    packet.m_nChannel = 0x03;                   // control channel (invoke)
+//    packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
+//    packet.m_packetType = RTMP_PACKET_TYPE_INFO;
+//    packet.m_nTimeStamp = 0;
+//    packet.m_nInfoField2 = _rtmp->m_stream_id;
+//    packet.m_hasAbsTimestamp = TRUE;
+//    packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
+//
+//    char *enc = packet.m_body;
+//    enc = AMF_EncodeString(enc, pend, &av_setDataFrame);
+//    enc = AMF_EncodeString(enc, pend, &av_onMetaData);
+//
+//    *enc++ = AMF_OBJECT;
+//
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_duration, 0.0);
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_fileSize, 0.0);
+//
+//    // videosize
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_width, _metaHeader.videoWidth);
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_height, _metaHeader.videoHeight);
+//
+//    // video
+//    enc = AMF_EncodeNamedString(enc, pend, &av_videocodecid, &av_avc1);
+//
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_videodatarate, _metaHeader.videoBitRate / 1000.f);
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_framerate, _metaHeader.videoFps);
+//
+//    // audio
+//    enc = AMF_EncodeNamedString(enc, pend, &av_audiocodecid, &av_mp4a);
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_audiodatarate, _metaHeader.audioDataRate);
+//
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_audiosamplerate, _metaHeader.audioSampleRate);
+//    enc = AMF_EncodeNamedNumber(enc, pend, &av_audiosamplesize, _metaHeader.audioBits);
+//    enc = AMF_EncodeNamedBoolean(enc, pend, &av_stereo, _metaHeader.audioChannels);
+//
+//    // sdk version
+//    enc = AMF_EncodeNamedString(enc, pend, &av_encoder, &av_SDKVersion);
+//
+//    *enc++ = 0;
+//    *enc++ = 0;
+//    *enc++ = AMF_OBJECT_END;
+//
+//    packet.m_nBodySize = (uint32_t)(enc - packet.m_body);
+    
+    
+    
     PILI_RTMPPacket rtmp_packet;
     PILI_RTMPPacket_Reset(&rtmp_packet);
     PILI_RTMPPacket_Alloc(&rtmp_packet, size);
-    
+
     rtmp_packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
     rtmp_packet.m_packetType = RTMP_PACKET_TYPE_INFO;
     rtmp_packet.m_hasAbsTimestamp = TRUE;
@@ -379,7 +447,7 @@
     if (_rtmp) rtmp_packet.m_nInfoField2 = _rtmp->m_stream_id;
     rtmp_packet.m_nBodySize = size;
     memcpy(rtmp_packet.m_body, data, size);
-    
+
     int ret = -1;
     if (_rtmp && PILI_RTMP_IsConnected(_rtmp)) {
         ret = PILI_RTMP_SendPacket(_rtmp, &rtmp_packet, 0, &_error);
@@ -396,7 +464,7 @@
     
     if (self.beginTimeStamp == 0) self.beginTimeStamp = timeStamp;
     timeStamp = timeStamp - self.beginTimeStamp;
-    
+//    NSLog(@"timeStamp：%u",timeStamp);
     rtmp_packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
     rtmp_packet.m_packetType = RTMP_PACKET_TYPE_VIDEO;
     rtmp_packet.m_hasAbsTimestamp = 0;
@@ -427,7 +495,7 @@
     rtmp_packet.m_packetType = RTMP_PACKET_TYPE_AUDIO;
     rtmp_packet.m_hasAbsTimestamp = 0;
     rtmp_packet.m_nTimeStamp = timeStamp;
-    rtmp_packet.m_nChannel = 0x05;
+    rtmp_packet.m_nChannel = 0x04;
     if (_rtmp) rtmp_packet.m_nInfoField2 = _rtmp->m_stream_id;
     rtmp_packet.m_nBodySize = size;
     memcpy(rtmp_packet.m_body, data, size);

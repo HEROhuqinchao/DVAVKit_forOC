@@ -18,13 +18,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
- 
     [self initLive];
+    [self.live startLive];
+    UIButton *b = [[UIButton alloc] initWithFrame:CGRectMake(self.view.width - 20 - 100,
+                                                             self.view.height - 80,
+                                                             100,
+                                                             40)];
+    b.title = @"翻转镜头";
+    b.titleColor = [UIColor whiteColor];
+    b.titleColorForHighlighted = [UIColor grayColor];
+    [b addTarget:self action:@selector(onClickForChangeCamera:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:b];
+    
 }
-
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+//    [self.live startLive];
+}
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.live startLive];
+  
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -39,8 +52,8 @@
     DVVideoConfig *videoConfig = [DVVideoConfig kConfig_720P_24fps];
     videoConfig.position = AVCaptureDevicePositionFront;
     videoConfig.gop = videoConfig.fps;
-    videoConfig.orientation =AVCaptureVideoOrientationLandscapeRight;
-    DVAudioConfig *audioConfig = [DVAudioConfig kConfig_44k_16bit_1ch];
+    videoConfig.orientation = AVCaptureVideoOrientationLandscapeRight;
+    DVAudioConfig *audioConfig = [DVAudioConfig kConfig_44k_16bit_2ch];
     
     self.live = [[DVLive alloc] init];
     self.live.delegate = self;
@@ -55,12 +68,15 @@
         [self.view insertSubview:self.live.preView atIndex:0];
     }
     
-    [self initBtnChangeCamera];
+//    [self initBtnChangeCamera];
+    
+    
 }
 
 
 #pragma mark - <-- ACTION -->
 - (void)onClickForChangeCamera:(UIButton *)sender {
+    [super onClickForChangeCamera:sender];
     sender.selected = !sender.selected;
     
     if (sender.selected) {

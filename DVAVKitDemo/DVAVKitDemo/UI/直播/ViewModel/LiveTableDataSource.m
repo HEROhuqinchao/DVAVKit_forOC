@@ -76,11 +76,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+    __weak typeof(self) weakSelf = self;
     if (self.delegate && self.keys && indexPath.row < self.keys.count) {
         NSString *key = self.keys[indexPath.row];
         NSString *value = self.models[key];
-        [self.delegate LiveTable:self didSelectItem:value];
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            [strongSelf.delegate LiveTable:strongSelf didSelectItem:value];
+        });
     }
 }
 

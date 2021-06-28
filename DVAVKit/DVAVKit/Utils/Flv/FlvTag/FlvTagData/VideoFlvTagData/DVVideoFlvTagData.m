@@ -14,7 +14,6 @@
 @property(nonatomic, assign, readwrite) DVVideoFlvTagCodecIDType codecIDType;
 @property(nonatomic, strong, readwrite) NSData *packetData;
 
-@property(nonatomic, assign, readwrite) BOOL sei;
 @end
 
 
@@ -22,10 +21,9 @@
 
 #pragma mark - <-- Initializer -->
 + (instancetype)tagDataWithFrameType:(DVVideoFlvTagFrameType)frameType
-                           avcPacket:(DVAVCVideoPacket *)packet  SEI:(BOOL)sei{
+                           avcPacket:(DVAVCVideoPacket *)packet{
     
     DVVideoFlvTagData *tagData = [[DVVideoFlvTagData alloc] init];
-    tagData.sei = sei;
     tagData.frameType = frameType;
     tagData.codecIDType = DVVideoFlvTagCodecIDType_AVC;
     tagData.packetData = packet.fullData;
@@ -33,9 +31,8 @@
 }
 
 + (instancetype)tagDataWithFrameType:(DVVideoFlvTagFrameType)frameType
-                          hevcPacket:(DVHEVCVideoPacket *)packet  SEI:(BOOL)sei{
+                          hevcPacket:(DVHEVCVideoPacket *)packet{
     DVVideoFlvTagData *tagData = [[DVVideoFlvTagData alloc] init];
-    tagData.sei = sei;
     tagData.frameType = frameType;
     tagData.codecIDType = DVVideoFlvTagCodecIDType_HEVC;
     tagData.packetData = packet.fullData;

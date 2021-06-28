@@ -11,7 +11,8 @@
 #import "DVAudioToolKit.h"
 #import "DVFlvKit.h"
 #import "DVRtmpKit.h"
-
+#import "ADYHardwareAudioEncoder.h"
+#import "NTPManger.h"
 @interface DVLive () < DVVideoCaptureDelegate,
                        DVAudioUnitDelegate,
                        DVVideoEncoderDelegate,
@@ -20,8 +21,13 @@
                        DVRtmpBufferDelegate>
 {
     
-    double time;
+    NSTimeInterval timeInterval;//记录当前开始直播时时间戳
+    uint64_t timeStamploc;///本地时钟计时器保存
+    BOOL  isUpDataNTP;/// 更新本地时间
 }
+
+@property (nonatomic, strong) dispatch_source_t timer;
+
 @property(nonatomic, strong, readwrite) DVVideoConfig *videoConfig;
 @property(nonatomic, strong, readwrite) DVAudioConfig *audioConfig;
 
@@ -54,12 +60,19 @@
         [self initLock];
         [self initSession];
         [self initRtmpSocket];
-        time = 0.0;
+        timeInterval = 0.0;
+        timeStamploc = 0.0;
+        isUpDataNTP = NO;
     }
     return self;
 }
 
 - (void)dealloc {
+    if (self.timer) {
+        //停止定时器
+        dispatch_source_cancel(self.timer);
+        self.timer = nil;
+    }
      if (_videoCapture) {
         [_videoCapture stop];
         _videoCapture.delegate = nil;
@@ -212,6 +225,7 @@
             au.IO.inputCallBackSwitch = YES;
             au.IO.outputPortStatus = YES;
             au.IO.bypassVoiceProcessingStatus = YES;
+
         }];
         
         [self printfError:error];
@@ -223,6 +237,7 @@
             au.IO.inputCallBackSwitch = YES;
             au.IO.outputPortStatus = YES;
             au.IO.bypassVoiceProcessingStatus = YES;
+
         }];
     }
     
@@ -256,6 +271,7 @@
     
     if (self.videoCapture) [self.videoCapture start];
     if (self.audioUnit) [self.audioUnit start];
+    if (!self.timer) [self upDataNTPTime];
 }
 
 - (void)stopLive {
@@ -266,6 +282,9 @@
     
     if (self.videoCapture) [self.videoCapture stop];
     if (self.audioUnit) [self.audioUnit stop];
+    //停止定时器
+    dispatch_source_cancel(self.timer);
+    self.timer = nil;
 }
 
 - (UIImage *)screenshot {
@@ -313,6 +332,7 @@
     tagData.audioSampleRate = self.audioConfig.sampleRate;
     tagData.audioBits = self.audioConfig.bitsPerChannel;
     tagData.audioChannels = self.audioConfig.numberOfChannels;
+    tagData.audioDataRate = self.audioConfig.bitRate;
     
     return tagData;
 }
@@ -324,11 +344,11 @@
     
     if (self.videoConfig.encoderType == DVVideoEncoderType_H264_Hardware) {
         DVAVCVideoPacket *packet = [DVAVCVideoPacket headerPacketWithSps:sps pps:pps];
-        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key avcPacket:packet SEI:NO];
+        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key avcPacket:packet];
     }
     else if (self.videoConfig.encoderType == DVVideoEncoderType_HEVC_Hardware) {
         DVHEVCVideoPacket *packet = [DVHEVCVideoPacket headerPacketWithVps:vps sps:sps pps:pps];
-        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key hevcPacket:packet SEI:NO];
+        tagData = [DVVideoFlvTagData tagDataWithFrameType:DVVideoFlvTagFrameType_Key hevcPacket:packet];
     }
     
     return tagData;
@@ -349,22 +369,101 @@
                             timeStamp:(uint64_t)timeStamp SEI:(BOOL)sei{
     
     DVRtmpPacket * packet = [[DVRtmpPacket alloc] init];
+    NSData *videoData;
+    if (sei) {
+        if (isUpDataNTP == NO) {
+            timeStamploc = timeStamp; //保存旧时间
+            isUpDataNTP = YES;
+        }
+        videoData = [self creatSEIVideoData:data timeStamp:timeStamp];
+    }else{
+        videoData = data;
+    }
     packet.timeStamp = (uint32_t)timeStamp;
-    
     DVVideoFlvTagFrameType frameType = isKeyFrame ? DVVideoFlvTagFrameType_Key : DVVideoFlvTagFrameType_NotKey;
     
     if (_videoConfig.encoderType == DVVideoEncoderType_H264_Hardware) {
-        DVAVCVideoPacket *avcPacket = [DVAVCVideoPacket packetWithAVC:data timeStamp:0 SEI:sei];
-        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType avcPacket:avcPacket SEI:sei];
+        DVAVCVideoPacket *avcPacket = [DVAVCVideoPacket packetWithAVC:videoData timeStamp:0];
+        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType avcPacket:avcPacket];
     }
     else if (_videoConfig.encoderType == DVVideoEncoderType_HEVC_Hardware) {
         DVHEVCVideoPacket *hevcPacket = [DVHEVCVideoPacket packetWithHEVC:data timeStamp:0];
-        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType hevcPacket:hevcPacket SEI:sei];
+        packet.videoData = [DVVideoFlvTagData tagDataWithFrameType:frameType hevcPacket:hevcPacket];
     }
     
     return packet;
 }
-
+-(NSData *)creatSEIVideoData:(NSData *)videoData timeStamp:(uint64_t)timeStamp{
+    //     计算差值
+    NSTimeInterval difference = (NSTimeInterval)(timeStamp - timeStamploc);
+    NSTimeInterval  ntpTime = timeInterval + difference;
+    /// SEI 信息拼接
+    NSMutableData *data = [[NSMutableData alloc] init];
+    /// SEI 帧特征 - 头
+    uint8_t header6[] = {0x06, 0x05};
+    [data appendBytes:header6 length:2];
+    /// 标识后面自定义包体长度  -- 默认33位
+    uint8_t customLength[] = {0x21};
+    [data appendBytes:customLength length:1];
+    /// 是16 字节的 uuid 固定不变
+    uint8_t uuid[] = {0x6c, 0x63, 0x70, 0x73, 0x62, 0x35, 0x64, 0x61, 0x39, 0x66, 0x34, 0x36, 0x35, 0x64, 0x33, 0x66};
+    [data appendBytes:uuid length:16];
+    /// 标识此扩展的子分类 帧同步固定为 01
+    uint8_t type[] = {0x01};
+    [data appendBytes:type length:1];
+    /// 分类信息体长度--此时默认15-时间字符串形式-「210615112934112」--表示 21年06月15号11时29分34秒112毫秒
+    uint8_t length[] = {0x0f};
+    [data appendBytes:length length:1];
+    /// 信息体 --是时间字符串表示形式，例如 20年06月24日14时15分30秒123毫秒
+    NSData *seiMsg=[NSMutableData dataWithData:[[self timestampSwitchTime:ntpTime andFormatter:@"YYMMddHHmmssSSS"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [data appendData:seiMsg];
+    /// SEI 帧特征 - 尾
+    uint8_t tail[] = {0x80};
+    [data appendBytes:tail length:1];
+    NSInteger i = 0;
+    NSInteger rtmpLength = data.length + 4;
+    unsigned char *body = (unsigned char *)malloc(rtmpLength);
+    /// 取出视频原始数据长度
+    body[i++] = (data.length >> 24) & 0xff;
+    body[i++] = (data.length >> 16) & 0xff;
+    body[i++] = (data.length >>  8) & 0xff;
+    body[i++] = (data.length) & 0xff;
+    memcpy(&body[i], data.bytes, data.length);
+    NSData *seiData = [NSData dataWithBytes:body length:rtmpLength];
+    NSMutableData *dataVideo = [[NSMutableData alloc] init];
+    [dataVideo appendData:seiData];
+    [dataVideo appendData:videoData];
+    return dataVideo;
+}
+- (NSString *)timestampSwitchTime:(NSInteger)timestamp andFormatter:(NSString *)format{
+    
+    NSTimeInterval _interval = timestamp/ 1000.000;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:_interval];
+    NSDateFormatter *objDateformat = [[NSDateFormatter alloc] init];
+    [objDateformat setDateFormat:@"YYMMddHHmmssSSS"];
+//    NSString  *time = [objDateformat stringFromDate: date];
+    return [objDateformat stringFromDate: date];
+}
+-(void)upDataNTPTime{
+    //创建队列
+   dispatch_queue_t queue = dispatch_get_main_queue();
+   //创建定时器
+   self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+   //设置定时器时间
+   dispatch_time_t start = dispatch_time(DISPATCH_TIME_NOW, 0);
+   //60秒执行一次
+   uint64_t interval = (uint64_t)(60.0 * NSEC_PER_SEC);
+   dispatch_source_set_timer(self.timer, start, interval, 0);
+   //设置回调
+   dispatch_source_set_event_handler(self.timer, ^{
+       //重复执行的事件
+       self->timeInterval = [NTPManger GetNtpTimeForHost:@"ntp.aodianyun.com"];
+       NSLog(@"进行 更新NTP：%f",self->timeInterval);
+       self->isUpDataNTP = NO;
+   });
+   //启动定时器
+   dispatch_resume(self.timer);
+}
 - (DVRtmpPacket *)audioPacketWithData:(NSData *)data
                             timeStamp:(uint64_t)timeStamp {
    
@@ -430,18 +529,19 @@
     
     if (self.videoEncoder && !error) {
         NSNumber *timeStampNum = [NSNumber numberWithUnsignedLongLong:RTMP_TIMESTAMP_NOW];
-        if (time == 0.0) {
-            time = RTMP_TIMESTAMP_NOW;
-        }
-        double   interval = RTMP_TIMESTAMP_NOW - time;
-        time = RTMP_TIMESTAMP_NOW;
-//        NSLog(@"视频输出间隔-采集：%f",interval);
         [self.videoEncoder encodeVideoBuffer:sampleBuffer userInfo:(__bridge void *)timeStampNum];
     }
 }
 
+//- (void)DVAudioUnit:(DVAudioUnit *)audioUnit recordData:(void *)mdata size:(UInt32)mSize error:(DVAudioError *)error
+//{
+//        if (self.audioEncoder && !error) {
+//            NSNumber *timeStampNum = [NSNumber numberWithUnsignedLongLong:RTMP_TIMESTAMP_NOW];
+//            [self.audioEncoder encodeAudioData:mdata size:mSize userInfo:(__bridge void *)timeStampNum];
+//        }
+//}
 - (void)DVAudioUnit:(DVAudioUnit *)audioUnit recordData:(NSData *)data error:(DVAudioError *)error {
-  
+
     if (self.audioEncoder && !error) {
         NSNumber *timeStampNum = [NSNumber numberWithUnsignedLongLong:RTMP_TIMESTAMP_NOW];
         [self.audioEncoder encodeAudioData:data userInfo:(__bridge void *)timeStampNum];

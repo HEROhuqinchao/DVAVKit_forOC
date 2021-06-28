@@ -13,7 +13,6 @@
 @property(nonatomic, assign, readwrite) DVAVCVideoPacketType packetType;
 @property(nonatomic, assign, readwrite) UInt32 timeStamp;
 @property(nonatomic, strong, readwrite) NSData *videoData;
-@property(nonatomic, assign, readwrite) BOOL sei;
 @end
 
 @implementation DVAVCVideoPacket
@@ -33,9 +32,8 @@
     return packet;
 }
 
-+ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp SEI:(BOOL)sei{
++ (instancetype)packetWithAVC:(NSData *)avcData timeStamp:(UInt32)timeStamp{
     DVAVCVideoPacket *packet = [[DVAVCVideoPacket alloc] init];
-    packet.sei = sei;
     packet.packetType = DVAVCVideoPacketType_AVC;
     packet.timeStamp = timeStamp;
     packet.videoData = avcData;

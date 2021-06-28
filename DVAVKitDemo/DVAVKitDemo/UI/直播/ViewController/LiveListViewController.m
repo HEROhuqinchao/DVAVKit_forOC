@@ -47,7 +47,8 @@
 - (void)loadData {
     self.tableDataSource.models = self.listViewModel.tableItems;
     
-    self.listView.liveURLText.text = @"rtmp://a.1029.lcps.aodianyun.com/live/0";
+    self.listView.liveURLText.text = @"rtmp://a.1029.lcps.aodianyun.com/live/1";
+//    self.listView.liveURLText.text = @"rtmp://1011.lssplay.aodianyun.com/demo/test8";
 //    self.listView.liveURLText.text = @"rtmp://1011.lsspublish.aodianyun.com/demo/test8";
 
 }
@@ -62,7 +63,6 @@
     __kindof UIViewController *vc = [[class alloc] init];
     [vc setValue:self.listView.liveURLText.text forKey:@"url"];
     [self.navigationController pushViewController:vc animated:YES];
-    
 }
 
 @end

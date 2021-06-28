@@ -13,6 +13,10 @@
     AudioConverterRef _converterRef;
     AudioStreamBasicDescription _inputBasicDesc;
     AudioStreamBasicDescription _outputBasicDesc;
+    char *leftBuf;                 /* char 指针--->pcm格式音频数据内存地址*/
+    char *aacBuf;                  /* char 指针--->aac格式音频数据内存地址*/
+    NSUInteger bufferLength;
+    NSInteger leftLength;          /* 内存数据长度 */
 }
 
 @end
@@ -31,7 +35,14 @@
         self.delegate = delegate;
         _inputBasicDesc = inputBasicDesc;
         _outputBasicDesc = outputBasicDesc;
+        bufferLength =1024*2*outputBasicDesc.mChannelsPerFrame;
+        if (!leftBuf) {
+            leftBuf = malloc(bufferLength);
+        }
         
+        if (!aacBuf) {
+            aacBuf = malloc(bufferLength);
+        }
         [self initAudioConverter];
     }
     return self;
@@ -40,6 +51,8 @@
 - (void)dealloc {
     [self closeEncoder];
     _delegate = nil;
+    if (aacBuf) free(aacBuf);
+    if (leftBuf) free(leftBuf);
 }
 
 
@@ -47,22 +60,30 @@
 - (void)initAudioConverter {
     
     OSStatus status;
-    AudioClassDescription classDesc = {
-        .mType = kAudioEncoderComponentType,
-        .mSubType = _outputBasicDesc.mFormatID,
-        .mManufacturer = 0,
-    };
-    
+//    AudioClassDescription classDesc = {
+//        .mType = kAudioEncoderComponentType,
+//        .mSubType = _outputBasicDesc.mFormatID,
+//        .mManufacturer = 0,
+//    };
+    // 获取编码器描述
+        AudioClassDescription * classDescH = [self getAudioClassDescWithEncodeType:kAudioFormatMPEG4AAC manufacturer:kAppleHardwareAudioCodecManufacturer];
     
     // 1.获取硬编码器
-    classDesc.mManufacturer = kAppleHardwareAudioCodecManufacturer;
+//    classDesc.mManufacturer = kAppleHardwareAudioCodecManufacturer;
     status = AudioConverterNewSpecific(&_inputBasicDesc,
                                        &_outputBasicDesc,
                                        1,
-                                       &classDesc,
+                                       classDescH,
                                        &_converterRef);
+    
+    UInt32 outputBitrate = (UInt32)( _outputBasicDesc.mChannelsPerFrame * 16 / 8 ) * _outputBasicDesc.mSampleRate;
+    UInt32 propSize = sizeof(outputBitrate);
     if (status == noErr) {
         NSLog(@"[DVAudioAACHardwareEncoder LOG]: 创建硬编码器成功 -> %u",(unsigned int)_outputBasicDesc.mFormatID);
+        /*
+         设置编码器的码率属性
+         */
+        status = AudioConverterSetProperty(_converterRef, kAudioConverterEncodeBitRate, propSize, &outputBitrate);
         return;
     } else {
         AudioCheckStatus(status, @"创建硬编码器失败");
@@ -70,14 +91,16 @@
     
     
     // 2.获取软编码器
-    classDesc.mManufacturer = kAppleSoftwareAudioCodecManufacturer;
+    AudioClassDescription * classDescS = [self getAudioClassDescWithEncodeType:kAudioFormatMPEG4AAC manufacturer:kAppleSoftwareAudioCodecManufacturer];
+//    classDesc.mManufacturer = kAppleSoftwareAudioCodecManufacturer;
     status = AudioConverterNewSpecific(&_inputBasicDesc,
                                        &_outputBasicDesc,
                                        1,
-                                       &classDesc,
+                                       classDescS,
                                        &_converterRef);
     if (status == noErr) {
         NSLog(@"[DVAudioAACHardwareEncoder LOG]: 创建软编码器成功 -> %u",(unsigned int)_outputBasicDesc.mFormatID);
+        status = AudioConverterSetProperty(_converterRef, kAudioConverterEncodeBitRate, propSize, &outputBitrate);
         return;
     } else {
         AudioCheckStatus(status, @"创建软编码器失败");
@@ -104,26 +127,59 @@
     if (!_converterRef || size <= 0) return;
     if (!self.delegate) return;
 
+    if(leftLength + size >= bufferLength){
+        ///<  发送
+        NSInteger totalSize = leftLength + size;
+        NSInteger encodeCount = totalSize/bufferLength;
+        char *totalBuf = malloc(totalSize);
+        char *p = totalBuf;
+        /**函数解释：将totalBuf中当前位置后面的0个字节 （typedef unsigned int size_t ）用 totalSize 替换并返回 totalBuf 。*/
+        memset(totalBuf, (int)totalSize, 0);
+        memcpy(totalBuf, leftBuf, leftLength);
+        memcpy(totalBuf + leftLength, data, size);
+        
+        for(NSInteger index = 0;index < encodeCount;index++){
+            [self encodeBuffer:p timeStamp:userInfo];
+            p += bufferLength;
+        }
+        
+        leftLength = totalSize%bufferLength;
+        memset(leftBuf, 0, bufferLength);
+        memcpy(leftBuf, totalBuf + (totalSize -leftLength), leftLength);
+        // 释放申请的内存空间
+        free(totalBuf);
+    }else{
+        memcpy(leftBuf+leftLength, data, size);
+        leftLength = leftLength + size;
+    }
+ 
+}
+/**
+ *  AAC编码
+ *
+ *  @param buf audioBufferList
+ *
+ *  @ return 返回经过AAC编码后的NSData
+ */
+- (void)encodeBuffer:(char*)buf timeStamp:(void *)userInfo{
     
     AudioBufferList inputBufferList = {
         .mNumberBuffers              = 1,
         .mBuffers[0].mNumberChannels = _inputBasicDesc.mChannelsPerFrame,
-        .mBuffers[0].mDataByteSize   = size,
-        .mBuffers[0].mData           = data,
+        .mBuffers[0].mDataByteSize   = (UInt32)bufferLength,
+        .mBuffers[0].mData           = buf,
     };
 
     // 初始化一个输出缓冲列表
     UInt32 outputDataPacketSize = 1;
-    char *outputBuf = malloc(size);
     
     AudioBufferList outputBufferList = {
         .mNumberBuffers              = 1,
         .mBuffers[0].mNumberChannels = _outputBasicDesc.mChannelsPerFrame,
-        .mBuffers[0].mDataByteSize   = size,      //设置缓冲区大小
-        .mBuffers[0].mData           = outputBuf, //设置缓冲区
+        .mBuffers[0].mDataByteSize   = (UInt32)bufferLength,      //设置缓冲区大小
+        .mBuffers[0].mData           = aacBuf, //设置缓冲区
     };
     AudioStreamPacketDescription outputPacketDesc = {0};
-    
 
     OSStatus status = AudioConverterFillComplexBuffer(_converterRef,
                                                       converterComplexCallBack,
@@ -139,10 +195,8 @@
     } else {
         AudioCheckStatus(status, @"音频编码失败");
     }
-  
-    free(outputBuf);
+    
 }
-
 - (void)closeEncoder {
     [self uninitAudioConverter];
 }
@@ -150,7 +204,7 @@
 
 //#pragma mark - <-- Method -->
 
-/**
+/**closeEncoder
  *  获取编解码器
  *
  *  @param encodeType   编码格式

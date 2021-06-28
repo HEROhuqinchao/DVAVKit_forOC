@@ -8,7 +8,7 @@
 
 #import "DVVideoH264HardwareEncoder.h"
 #import "DVVideoError.h"
-
+//#import "NTPManger.h"
 @interface DVVideoH264HardwareEncoder ()
 
 @property(nonatomic, strong) DVVideoConfig *config;
@@ -232,7 +232,8 @@
     if (self.frameCount % (uint64_t)self.gop == 0) {
         properties = @{(__bridge NSString *)kVTEncodeFrameOptionKey_ForceKeyFrame : @(YES)};
     }
-    
+//    NSLog(@"pts:%lld，%u，%lld，%d",pts.value,pts.flags,pts.epoch,pts.timescale);
+//    NSLog(@"duration:%lld，%u，%lld，%d",duration.value,duration.flags,duration.epoch,duration.timescale);
     // 进行压缩, 异步回调
     OSStatus status = VTCompressionSessionEncodeFrame(_sessionRef,  // 编码会话
                                                       imageBufRef,  // 未压缩的源数据
@@ -369,129 +370,26 @@ void vtH264CompressionOutputCallback(void *outputCallbackRefCon,
         uint32_t NALULen = 0;
         memcpy(&NALULen, dataPointer + dataOffset, AVCCHeaderLen);
         NALULen = CFSwapInt32BigToHost(NALULen); // 大端模式帧长度 转换为 系统端
-         
-        NSData *pktData = [NSData dataWithBytes:(dataPointer + dataOffset + AVCCHeaderLen)
-                                         length:NALULen];
+         /**第一种获取不包含长度的数据*/
+//        NSData *pktData = [NSData dataWithBytes:(dataPointer + dataOffset + AVCCHeaderLen)
+//                                         length:NALULen];
+        
+        /**第二种获取数据包含整体数据长度*/
+        NSData *pktData = [NSData dataWithBytes:(dataPointer + dataOffset)
+                                         length:(AVCCHeaderLen + NALULen)];
         
         // 不知道为什么会编码出长度为35的数据
         if (pktData.length > 35) {
-            /// 发送视频原始数据
-//            [encoder.delegate DVVideoEncoder:encoder codedData:pktData
-//                                  isKeyFrame:isKeyFrame
-//                                    userInfo:sourceFrameRefCon SEI:NO];
-
-        }
-        
-        /// SEI 信息拼接
-        NSMutableData *data = [[NSMutableData alloc] init];
-        /// SEI 帧特征 - 头
-        uint8_t header6[] = {0x06, 0x05};
-        [data appendBytes:header6 length:2];
-        /// 标识后面自定义包体长度  -- 默认33位
-        uint8_t customLength[] = {0x21};
-        [data appendBytes:customLength length:1];
-        /// 是16 字节的 uuid 固定不变
-        uint8_t uuid[] = {0x6c, 0x63, 0x70, 0x73, 0x62, 0x35, 0x64, 0x61, 0x39, 0x66, 0x34, 0x36, 0x35, 0x64, 0x33, 0x66};
-        [data appendBytes:uuid length:16];
-        /// 标识此扩展的子分类 帧同步固定为 01
-        uint8_t type[] = {0x01};
-        [data appendBytes:type length:1];
-        /// 分类信息体长度--此时默认15-时间字符串形式-「210615112934112」--表示 21年06月15号11时29分34秒112毫秒
-        uint8_t length[] = {0x0f};
-        [data appendBytes:length length:1];
-        /// 信息体 --是时间字符串表示形式，例如 20年06月24日14时15分30秒123毫秒
-        NSData *seiMsg=[NSMutableData dataWithData:[[encoder getTime] dataUsingEncoding:NSUTF8StringEncoding]];
-        [data appendData:seiMsg];
-        /// SEI 帧特征 - 尾
-        uint8_t tail[] = {0x80};
-        [data appendBytes:tail length:1];
-//        uint8_t heard[] = {0x00, 0x00, 0x00, 0x01};
-//        [data appendBytes:heard length:4];
-//        [data appendData:pktData];
-        
-        
-        NSInteger i = 0;
-        NSInteger rtmpLength = data.length + 4;
-        unsigned char *body = (unsigned char *)malloc(rtmpLength);
-        /// 取出视频原始数据长度
-        body[i++] = (data.length >> 24) & 0xff;
-        body[i++] = (data.length >> 16) & 0xff;
-        body[i++] = (data.length >>  8) & 0xff;
-        body[i++] = (data.length) & 0xff;
-        memcpy(&body[i], data.bytes, data.length);
-        NSData *seiData = [NSData dataWithBytes:body length:rtmpLength];
-        
-        NSInteger j = 0;
-        NSInteger rtmpLength2 = pktData.length + 4;
-        unsigned char *body2 = (unsigned char *)malloc(rtmpLength2);
-        /// 取出视频原始数据长度
-        body2[j++] = (pktData.length >> 24) & 0xff;
-        body2[j++] = (pktData.length >> 16) & 0xff;
-        body2[j++] = (pktData.length >>  8) & 0xff;
-        body2[j++] = (pktData.length) & 0xff;
-        memcpy(&body2[j], pktData.bytes, pktData.length);
-        NSData *vioData = [NSData dataWithBytes:body2 length:rtmpLength2];
-        
-        NSMutableData *dataVideo = [[NSMutableData alloc] init];
-        [dataVideo appendData:seiData];
-        [dataVideo appendData:vioData];
-        if (pktData.length > 35) {
-            //        isKeyFrame ? seiData : pktData
-            [encoder.delegate DVVideoEncoder:encoder codedData: dataVideo
+            /// 发送视频原始数据--进行添加SEI帧同步数据
+            [encoder.delegate DVVideoEncoder:encoder codedData:pktData
                                   isKeyFrame:isKeyFrame
-                                    userInfo:sourceFrameRefCon SEI:isKeyFrame?YES:NO];
+                                    userInfo:sourceFrameRefCon SEI:YES];
+
         }
         dataOffset += AVCCHeaderLen + NALULen;
     }
 }
-#pragma mark -----Public
--(NSString *)getTime{
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    // 设置想要的格式，hh与HH的区别:分别表示12小时制,24小时制
-    [formatter setDateFormat:@"YYMMddHHmmssSSS"];
-    NSDate *dateNow = [NSDate date];
-    //把NSDate按formatter格式转成NSString
-    NSString *currentTime = [formatter stringFromDate:dateNow];
-    return currentTime;
-    
-}
 
-/**
- 十进制转换十六进制
- 
- @param decimal 十进制数
- @return 十六进制数
- */
-- (NSString *)getHexByDecimal:(NSInteger)decimal {
-    NSString *hex =@"";
-    NSString *letter;
-    NSInteger number;
-    for (int i = 0; i<9; i++) {
-        number = decimal % 16;
-        decimal = decimal / 16;
-        switch (number) {
-            case 10:
-                letter =@"A"; break;
-            case 11:
-                letter =@"B"; break;
-            case 12:
-                letter =@"C"; break;
-            case 13:
-                letter =@"D"; break;
-            case 14:
-                letter =@"E"; break;
-            case 15:
-                letter =@"F"; break;
-            default:
-                letter = [NSString stringWithFormat:@"%ld", (long)number];
-        }
-        hex = [letter stringByAppendingString:hex];
-        if (decimal == 0) {
-            break;
-        }
-    }
-    return hex;
-}
 - (NSData *)convertHexStrToData:(NSString *)str {
     if (!str || [str length] == 0) {
         return nil;

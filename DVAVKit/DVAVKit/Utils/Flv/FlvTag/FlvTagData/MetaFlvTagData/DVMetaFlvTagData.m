@@ -23,7 +23,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.mDict = [NSMutableDictionary dictionary];
+        self.mDict = [NSMutableDictionary new];
         self.duration = 0;
         self.fileSize = 0;
         self.videoCodecID = @"avc1";
@@ -112,6 +112,11 @@
                    forAMFKey:@"audiocodecid"];
 }
 
+-(void)setAudioDataRate:(NSUInteger)audioDataRate{
+    _audioDataRate = audioDataRate;
+    [self.mDict setAMFObject:[NSNumber numberWithDouble:(double)audioDataRate]
+                   forAMFKey:@"audiodatarate"];
+}
 
 #pragma mark - <-- Delegate -->
 - (NSData *)fullData {

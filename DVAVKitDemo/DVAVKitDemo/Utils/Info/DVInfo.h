@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define IS_IPHONE_Xs_Max ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size)&& !isPad : NO)
 
 //判断iPhoneX所有系列
-#define IS_PhoneXAll (IS_IPHONE_X || IS_IPHONE_Xr || IS_IPHONE_Xs_Max)
+#define IS_PhoneXAll (IS_IPHONE_X || IS_IPHONE_Xr || IS_IPHONE_Xs_Max || kiPhone_11 || kiPhone_11P || kiPhone_11PM || kiPhone_12M || kiPhone_12 || kiPhone_12P || kiPhone_12PM)
 #define k_Height_NavContentBar 44.0f
 #define k_Height_StatusBar (IS_PhoneXAll? 44.0 : 20.0)
 #define k_Height_NavBar (IS_PhoneXAll ? 88.0 : 64.0)
@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, DVPhoneType) {
     kiPhone_2G, kiPhone_3G, kiPhone_4, kiPhone_4S, kiPhone_5,
     kiPhone_5C, kiPhone_5S, kiPhone_6, kiPhone_6P, kiPhone_6S,
     kiPhone_6SP, kiPhone_7, kiPhone_7P, kiPhone_8, kiPhone_8P,
-    kiPhone_X, kiPhone_XR, kiPhone_XS, kiPhone_XSM, kiPhone_SE,
+    kiPhone_X, kiPhone_XR, kiPhone_XS, kiPhone_XSM, kiPhone_11, kiPhone_11P, kiPhone_11PM, kiPhone_12M, kiPhone_12, kiPhone_12P, kiPhone_12PM, kiPhone_SE,
     kiPad_IPAD, k_PC, k_NULL
 };
 

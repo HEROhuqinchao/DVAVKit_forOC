@@ -42,14 +42,13 @@ typedef NS_ENUM(UInt8, DVVideoFlvTagCodecIDType) {
 @property(nonatomic, assign, readonly) DVVideoFlvTagFrameType frameType;
 @property(nonatomic, assign, readonly) DVVideoFlvTagCodecIDType codecIDType;
 @property(nonatomic, strong, readonly) NSData *packetData;
-@property(nonatomic, assign, readonly) BOOL sei;
 
 #pragma mark - <-- Initializer -->
 + (instancetype)tagDataWithFrameType:(DVVideoFlvTagFrameType)frameType
-                           avcPacket:(DVAVCVideoPacket *)packet SEI:(BOOL)sei;
+                           avcPacket:(DVAVCVideoPacket *)packet;
 
 + (instancetype)tagDataWithFrameType:(DVVideoFlvTagFrameType)frameType
-                          hevcPacket:(DVHEVCVideoPacket *)packet SEI:(BOOL)sei;
+                          hevcPacket:(DVHEVCVideoPacket *)packet;
 
 @end
 

@@ -42,6 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) UInt32 audioChannels;
 /// 音频编码器ID,默认: mp4a
 @property(nonatomic, copy) NSString *audioCodecID;
+/// 码率 Kbps : ( 位数 / 8 * 通道数 ) * 采样率 = 每秒多少字节
+@property(nonatomic, assign) NSUInteger  audioDataRate;
+
 
 @end
 

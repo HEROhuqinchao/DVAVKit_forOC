@@ -18,10 +18,10 @@
     basicDesc.mSampleRate = config.sampleRate;
     basicDesc.mFormatID = kAudioFormatLinearPCM;
     basicDesc.mFormatFlags = kAudioFormatFlagIsSignedInteger
-                            |kAudioFormatFlagIsPacked;
-                            //|kAudioFormatFlagsNativeEndian;
+                            |kAudioFormatFlagIsPacked
+                            |kAudioFormatFlagsNativeEndian;
     
-    basicDesc.mBitsPerChannel = config.bitsPerChannel;
+    basicDesc.mBitsPerChannel = config.bitsPerChannel;//16
     basicDesc.mChannelsPerFrame = config.numberOfChannels;
     
     basicDesc.mFramesPerPacket = 1;

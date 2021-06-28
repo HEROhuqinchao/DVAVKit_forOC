@@ -11,15 +11,12 @@
 		3E60616A24227035000D0E64 /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E60616824227035000D0E64 /* user.png */; };
 		DA0111E8266E18B20022FEE8 /* DVAVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF21412E2440086400D11B08 /* DVAVKit.framework */; };
 		DA0111EB266E19140022FEE8 /* DVAVKitBundle.bundle in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = FF2141302440086400D11B08 /* DVAVKitBundle.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DA376A5B26789AD400A7901C /* GPUImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA376A5A26789ACD00A7901C /* GPUImage.framework */; };
-		DA376A5C26789AED00A7901C /* GPUImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DA376A5A26789ACD00A7901C /* GPUImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FF1F5BFD2440125400150FA6 /* LiveListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5BFC2440125400150FA6 /* LiveListViewController.m */; };
 		FF1F5C002440126200150FA6 /* LiveListView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5BFF2440126200150FA6 /* LiveListView.m */; };
 		FF1F5C022440126B00150FA6 /* LiveListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FF1F5C012440126B00150FA6 /* LiveListView.xib */; };
 		FF1F5C05244014C100150FA6 /* LiveListViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5C04244014C100150FA6 /* LiveListViewModel.m */; };
 		FF1F5C082440154F00150FA6 /* LiveTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5C072440154F00150FA6 /* LiveTableDataSource.m */; };
 		FF1F5C1524401C5700150FA6 /* LiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5C1324401C5700150FA6 /* LiveViewController.m */; };
-		FF1F5C1624401C5700150FA6 /* LiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FF1F5C1424401C5700150FA6 /* LiveViewController.xib */; };
 		FF1F5C1A24401C6500150FA6 /* LivePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5C1824401C6500150FA6 /* LivePlayerViewController.m */; };
 		FF1F5C1B24401C6500150FA6 /* LivePlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FF1F5C1924401C6500150FA6 /* LivePlayerViewController.xib */; };
 		FF1F5C1E24401C8B00150FA6 /* H264LiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF1F5C1D24401C8B00150FA6 /* H264LiveViewController.m */; };
@@ -99,27 +96,6 @@
 			remoteGlobalIDString = 3E28391D2436574C00EC34A4;
 			remoteInfo = DVAVKitBundle;
 		};
-		DA376A5126789ACD00A7901C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BCE209E41943F20C002FEED8;
-			remoteInfo = GPUImageFramework;
-		};
-		DA376A5726789ACD00A7901C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BCF1A33414DDB1EC00852800;
-			remoteInfo = GPUImage;
-		};
-		DA376A5926789ACD00A7901C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BCE209E51943F20C002FEED8;
-			remoteInfo = GPUImageFramework;
-		};
 		FF21412D2440086400D11B08 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FF2141282440086400D11B08 /* DVAVKit.xcodeproj */;
@@ -143,7 +119,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DA376A5C26789AED00A7901C /* GPUImage.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,7 +139,6 @@
 /* Begin PBXFileReference section */
 		3E60616724227034000D0E64 /* password.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = password.png; sourceTree = "<group>"; };
 		3E60616824227035000D0E64 /* user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user.png; sourceTree = "<group>"; };
-		DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPUImage.xcodeproj; path = "/Users/huqinchao/Documents/文稿 - 胡勤超的Mac mini/DVAVKit_forOC/GPUImage/GPUImage.xcodeproj"; sourceTree = "<absolute>"; };
 		FF1F5BFB2440125400150FA6 /* LiveListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveListViewController.h; sourceTree = "<group>"; };
 		FF1F5BFC2440125400150FA6 /* LiveListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveListViewController.m; sourceTree = "<group>"; };
 		FF1F5BFE2440126200150FA6 /* LiveListView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveListView.h; sourceTree = "<group>"; };
@@ -176,7 +150,6 @@
 		FF1F5C072440154F00150FA6 /* LiveTableDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveTableDataSource.m; sourceTree = "<group>"; };
 		FF1F5C1224401C5700150FA6 /* LiveViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiveViewController.h; sourceTree = "<group>"; };
 		FF1F5C1324401C5700150FA6 /* LiveViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiveViewController.m; sourceTree = "<group>"; };
-		FF1F5C1424401C5700150FA6 /* LiveViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveViewController.xib; sourceTree = "<group>"; };
 		FF1F5C1724401C6500150FA6 /* LivePlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LivePlayerViewController.h; sourceTree = "<group>"; };
 		FF1F5C1824401C6500150FA6 /* LivePlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LivePlayerViewController.m; sourceTree = "<group>"; };
 		FF1F5C1924401C6500150FA6 /* LivePlayerViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LivePlayerViewController.xib; sourceTree = "<group>"; };
@@ -303,7 +276,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA376A5B26789AD400A7901C /* GPUImage.framework in Frameworks */,
 				DA0111E8266E18B20022FEE8 /* DVAVKit.framework in Frameworks */,
 				FFF84F3624400D9C00DD23EF /* libbz2.1.0.tbd in Frameworks */,
 				FFF84F3424400D9C00DD23EF /* libc++.tbd in Frameworks */,
@@ -323,15 +295,6 @@
 				FF65329E2420A4F800D01F1D /* icon-dog.jpg */,
 			);
 			path = image;
-			sourceTree = "<group>";
-		};
-		DA376A4F26789ACD00A7901C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				DA376A5826789ACD00A7901C /* libGPUImage.a */,
-				DA376A5A26789ACD00A7901C /* GPUImage.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		FF1F5BF7244011FB00150FA6 /* View */ = {
@@ -369,7 +332,6 @@
 			children = (
 				FF1F5C1224401C5700150FA6 /* LiveViewController.h */,
 				FF1F5C1324401C5700150FA6 /* LiveViewController.m */,
-				FF1F5C1424401C5700150FA6 /* LiveViewController.xib */,
 				FF1F5C1724401C6500150FA6 /* LivePlayerViewController.h */,
 				FF1F5C1824401C6500150FA6 /* LivePlayerViewController.m */,
 				FF1F5C1924401C6500150FA6 /* LivePlayerViewController.xib */,
@@ -419,7 +381,6 @@
 				FF90E1B2241F615F00BCA018 /* DVAVKitDemo */,
 				FF90E1B1241F615F00BCA018 /* Products */,
 				FF90E1D2241F617C00BCA018 /* Frameworks */,
-				DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -857,7 +818,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				DA376A5226789ACD00A7901C /* PBXTargetDependency */,
 				DA0111E7266E18AA0022FEE8 /* PBXTargetDependency */,
 				DA0111E5266E18A70022FEE8 /* PBXTargetDependency */,
 			);
@@ -896,10 +856,6 @@
 					ProductGroup = FF2141292440086400D11B08 /* Products */;
 					ProjectRef = FF2141282440086400D11B08 /* DVAVKit.xcodeproj */;
 				},
-				{
-					ProductGroup = DA376A4F26789ACD00A7901C /* Products */;
-					ProjectRef = DA376A4E26789ACD00A7901C /* GPUImage.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -909,20 +865,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		DA376A5826789ACD00A7901C /* libGPUImage.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libGPUImage.a;
-			remoteRef = DA376A5726789ACD00A7901C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		DA376A5A26789ACD00A7901C /* GPUImage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = GPUImage.framework;
-			remoteRef = DA376A5926789ACD00A7901C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		FF21412E2440086400D11B08 /* DVAVKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -956,7 +898,6 @@
 				FF1F5C1B24401C6500150FA6 /* LivePlayerViewController.xib in Resources */,
 				FF9A1FD72445C15E005B9CFE /* icon_message_error.png in Resources */,
 				FF51868A250B846C00566AC9 /* RecordViewController.xib in Resources */,
-				FF1F5C1624401C5700150FA6 /* LiveViewController.xib in Resources */,
 				FF65329F2420A4F800D01F1D /* icon-dog.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1036,11 +977,6 @@
 			isa = PBXTargetDependency;
 			name = DVAVKitBundle;
 			targetProxy = DA0111E6266E18AA0022FEE8 /* PBXContainerItemProxy */;
-		};
-		DA376A5226789ACD00A7901C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = GPUImageFramework;
-			targetProxy = DA376A5126789ACD00A7901C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

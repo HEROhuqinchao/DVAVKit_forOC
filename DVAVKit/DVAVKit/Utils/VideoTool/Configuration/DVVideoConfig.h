@@ -38,7 +38,7 @@ typedef NS_ENUM(NSUInteger, DVVideoDecoderType) {
 /// 显示方向
 @property (nonatomic, assign) AVCaptureVideoOrientation orientation;
 /// 视频输出方向
-@property (nonatomic, assign) UIInterfaceOrientation outputImageOrientation;
+@property (nonatomic, assign, readonly) UIInterfaceOrientation outputImageOrientation;
 
 /// 帧率
 @property (nonatomic, assign) NSUInteger fps;

@@ -301,6 +301,7 @@ static const int kOutputBus = 0;
 
 
 #pragma mark - <-- CallBack -->
+//生成Data数据发送
 OSStatus recordCallback(void *inRefCon,
                         AudioUnitRenderActionFlags *ioActionFlags,
                         const AudioTimeStamp *inTimeStamp,
@@ -345,7 +346,7 @@ OSStatus recordCallback(void *inRefCon,
     return noErr;
 }
 
-
+//生成mData
 OSStatus recordCallback_mData(void *inRefCon,
                               AudioUnitRenderActionFlags *ioActionFlags,
                               const AudioTimeStamp *inTimeStamp,

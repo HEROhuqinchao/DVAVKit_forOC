@@ -19,6 +19,7 @@
     
     self.barBtn = [[UIBarButtonItem alloc] initWithTitle:@"" style:(UIBarButtonItemStylePlain) target:nil action:nil];
     self.navigationItem.rightBarButtonItem = self.barBtn;
+//    [self initBtnChangeCamera];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
