@@ -67,6 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)encodeVideoBuffer:(nullable CMSampleBufferRef)buffer
                  userInfo:(nullable void *)userInfo;
 
+- (void)encodeVideoPxBuffer:(nullable CVImageBufferRef)imageBufRef
+                   userInfo:(void *)userInfo;
+
 - (void)closeEncoder;
 
 - (nullable NSData *)convertToNALUWithData:(NSData *)data isKeyFrame:(BOOL)isKeyFrame;

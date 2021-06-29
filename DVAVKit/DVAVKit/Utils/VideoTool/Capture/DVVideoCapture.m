@@ -173,7 +173,6 @@
 - (AVCaptureDevice *)getCameraWithPosition:(AVCaptureDevicePosition)position {
     AVCaptureDevice *device = nil;
     NSArray<AVCaptureDevice *> *devices;
-
     if (@available(iOS 10.0, *)) {
         AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession =  [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionUnspecified];
         devices = captureDeviceDiscoverySession.devices;

@@ -55,7 +55,7 @@
     videoConfig.orientation = AVCaptureVideoOrientationLandscapeRight;
     DVAudioConfig *audioConfig = [DVAudioConfig kConfig_44k_16bit_2ch];
     
-    self.live = [[DVLive alloc] init];
+    self.live = [[DVLive alloc] initWithBeauty:YES];
     self.live.delegate = self;
     self.live.isEnableLog = YES;
     [self.live setVideoConfig:videoConfig];
@@ -78,11 +78,10 @@
 - (void)onClickForChangeCamera:(UIButton *)sender {
     [super onClickForChangeCamera:sender];
     sender.selected = !sender.selected;
-    
     if (sender.selected) {
-        [self.live.camera changeToBackCamera];
+        [self.live changeToBackCamera];
     } else {
-        [self.live.camera changeToFrontCamera];
+        [self.live changeToFrontCamera];
     }
 }
 

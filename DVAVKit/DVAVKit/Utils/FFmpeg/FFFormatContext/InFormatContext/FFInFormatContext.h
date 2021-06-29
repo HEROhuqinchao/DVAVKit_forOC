@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)FFInFormatContext:(FFInFormatContext *)context readAudioPacket:(FFPacket *)packet;
 
 // IO
-- (void)FFInFormatContext:(FFInFormatContext *)context inIOPacket:(FFPacket **)packet;
+- (void)FFInFormatContext:(FFInFormatContext *)context inIOPacket:(FFPacket *)packet;
 
 @end
 

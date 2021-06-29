@@ -94,121 +94,121 @@
 
 #pragma mark - <------------------------------ 完美分割线 ------------------------------>
 #pragma mark - <-- 添加 实例 方法 -->
-- (void)addInstanceMethod:(SEL)selector i_block:(int(^)())block {
+- (void)addInstanceMethod:(SEL)selector i_block:(int(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector I_block:(NSInteger(^)())block {
+- (void)addInstanceMethod:(SEL)selector I_block:(NSInteger(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector f_block:(float(^)())block {
+- (void)addInstanceMethod:(SEL)selector f_block:(float(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector d_block:(double(^)())block {
+- (void)addInstanceMethod:(SEL)selector d_block:(double(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector b_block:(BOOL(^)())block {
+- (void)addInstanceMethod:(SEL)selector b_block:(BOOL(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector o_block:(id _Nullable(^)())block {
+- (void)addInstanceMethod:(SEL)selector o_block:(id _Nullable(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
-- (void)addInstanceMethod:(SEL)selector v_block:(void(^)())block {
+- (void)addInstanceMethod:(SEL)selector v_block:(void(^)(void))block {
     [self addInstanceMethod:selector block:block];
 }
 
 
 #pragma mark - <-- 添加 协议 方法 -->
-- (void)addDelegateMethod:(SEL)selector i_block:(int(^)())block {
+- (void)addDelegateMethod:(SEL)selector i_block:(int(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector I_block:(NSInteger(^)())block {
+- (void)addDelegateMethod:(SEL)selector I_block:(NSInteger(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector f_block:(float(^)())block {
+- (void)addDelegateMethod:(SEL)selector f_block:(float(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector d_block:(double(^)())block {
+- (void)addDelegateMethod:(SEL)selector d_block:(double(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector b_block:(BOOL(^)())block {
+- (void)addDelegateMethod:(SEL)selector b_block:(BOOL(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector o_block:(id(^)())block {
+- (void)addDelegateMethod:(SEL)selector o_block:(id(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
-- (void)addDelegateMethod:(SEL)selector v_block:(void(^)())block {
+- (void)addDelegateMethod:(SEL)selector v_block:(void(^)(void))block {
     [self addDelegateMethod:selector block:block];
 }
 
 
 #pragma mark - <-- 添加 本类 公共方法 -->
-+ (void)addPublicMethod:(SEL)selector i_block:(int(^)())block {
++ (void)addPublicMethod:(SEL)selector i_block:(int(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector I_block:(NSInteger(^)())block {
++ (void)addPublicMethod:(SEL)selector I_block:(NSInteger(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector f_block:(float(^)())block {
++ (void)addPublicMethod:(SEL)selector f_block:(float(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector d_block:(double(^)())block {
++ (void)addPublicMethod:(SEL)selector d_block:(double(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector b_block:(BOOL(^)())block {
++ (void)addPublicMethod:(SEL)selector b_block:(BOOL(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector o_block:(id(^)())block {
++ (void)addPublicMethod:(SEL)selector o_block:(id(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
-+ (void)addPublicMethod:(SEL)selector v_block:(void(^)())block {
++ (void)addPublicMethod:(SEL)selector v_block:(void(^)(void))block {
     [self addPublicMethod:selector block:block];
 }
 
 
 #pragma mark - <-- 添加 本类 公共类方法 -->
-+ (void)addClassMethod:(SEL)selector i_block:(int(^)())block {
++ (void)addClassMethod:(SEL)selector i_block:(int(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector I_block:(NSInteger(^)())block {
++ (void)addClassMethod:(SEL)selector I_block:(NSInteger(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector f_block:(float(^)())block {
++ (void)addClassMethod:(SEL)selector f_block:(float(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector d_block:(double(^)())block {
++ (void)addClassMethod:(SEL)selector d_block:(double(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector b_block:(BOOL(^)())block {
++ (void)addClassMethod:(SEL)selector b_block:(BOOL(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector o_block:(id(^)())block {
++ (void)addClassMethod:(SEL)selector o_block:(id(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 
-+ (void)addClassMethod:(SEL)selector v_block:(void(^)())block {
++ (void)addClassMethod:(SEL)selector v_block:(void(^)(void))block {
     [self addClassMethod:selector block:block];
 }
 

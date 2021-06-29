@@ -1,10 +1,11 @@
 //
 //  GPUImagePixelBufferOutput.h
-//  TrtcObjc
 //
-//  Created by kaoji on 2020/8/23.
-//  Copyright © 2020 kaoji. All rights reserved.
+//  Function: 奥点云直播推流用 RTMP SDK
 //
+//  Copyright © 2021 杭州奥点科技股份有限公司. All rights reserved.
+//
+//  Version: 1.1.0  Creation(版本信息)
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>

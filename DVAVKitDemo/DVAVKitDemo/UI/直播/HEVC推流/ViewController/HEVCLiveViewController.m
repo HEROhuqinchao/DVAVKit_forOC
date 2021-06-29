@@ -19,7 +19,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
- 
     [self initLive];
 }
 
@@ -44,13 +43,12 @@
     
     DVAudioConfig *audioConfig = [DVAudioConfig kConfig_44k_16bit_1ch];
     
-    self.live = [[DVLive alloc] init];
+    self.live = [[DVLive alloc] initWithBeauty:NO];
     self.live.delegate = self;
     self.live.isEnableLog = YES;
     [self.live setVideoConfig:videoConfig];
     [self.live setAudioConfig:audioConfig];
     [self.live connectToURL:self.url];
-    
     
     if (self.live.preView) {
         self.live.preView.frame = [DVFrame frame_full];
@@ -66,10 +64,11 @@
     sender.selected = !sender.selected;
     
     if (sender.selected) {
-        [self.live.camera changeToBackCamera];
+        [self.live changeToBackCamera];
     } else {
-        [self.live.camera changeToFrontCamera];
+        [self.live changeToFrontCamera];
     }
+
 }
 
 #pragma mark - <-- Delegate -->

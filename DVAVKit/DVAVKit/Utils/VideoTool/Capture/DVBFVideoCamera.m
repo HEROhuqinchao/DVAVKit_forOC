@@ -16,7 +16,6 @@
 #import <GPUImage/GPUImageFramework.h>
 #else
 #import "GPUImage.h"
-
 #endif
 
 @interface DVBFVideoCamera () <GPUImageVideoCameraDelegate,UIGestureRecognizerDelegate>
@@ -35,17 +34,21 @@
 @property (nonatomic, strong) GPUImageMovieWriter *movieWriter;
 @property (nonatomic, strong) DVVideoConfig *configuration;
 @property (nonatomic, strong) GPUImagePixelBufferOutput *gpuOutput;
+@property (nonatomic, assign) BOOL  isRunning;
+@property(nonatomic, strong, readwrite) UIView *preView;
+
 @end
 @implementation DVBFVideoCamera
 @synthesize torch = _torch;
 @synthesize beautyLevel = _beautyLevel;
 @synthesize brightLevel = _brightLevel;
 @synthesize zoomScale = _zoomScale;
-
+@synthesize preView = _preView;
 #pragma mark -- LifeCycle
-- (instancetype)initWithVideoConfiguration:(DVVideoConfig *)configuration {
+- (instancetype)initWithVideoConfiguration:(DVVideoConfig *)configuration delegate:(nonnull id<DVBFVideoCameraDelegate>)delegate{
     if (self = [super init]) {
-        _configuration = configuration;
+        _delegate = delegate;
+        [self updateConfig:configuration];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterBackground:) name:UIApplicationWillResignActiveNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
         //将要改变状态栏的方向-- 通知
@@ -61,7 +64,9 @@
     }
     return self;
 }
-
+- (void)updateConfig:(DVVideoConfig *)config {
+    self.configuration = config;
+}
 - (void)dealloc {
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -69,6 +74,12 @@
     if(_gpuImageView){
         [_gpuImageView removeFromSuperview];
         _gpuImageView = nil;
+    }
+    if (_preView) {
+        [_preView removeObserver:self forKeyPath:@"frame" context:nil];
+        [_preView removeObserver:self forKeyPath:@"bounds" context:nil];
+        [_preView removeFromSuperview];
+        _preView = nil;
     }
 }
 
@@ -95,19 +106,23 @@
     return _videoCamera;
 }
 
-- (void)setRunning:(BOOL)running {
-    if (_running == running) return;
-    _running = running;
-    if (!_running) {
-        [UIApplication sharedApplication].idleTimerDisabled = NO;
-        [self.videoCamera stopCameraCapture];
-        if(self.saveLocalVideo) [self.movieWriter finishRecording];
-    } else {
-        [UIApplication sharedApplication].idleTimerDisabled = YES;
-        [self reloadFilter];
-        [self.videoCamera startCameraCapture];
-        if(self.saveLocalVideo) [self.movieWriter startRecording];
-    }
+- (void)start{
+    if (_isRunning == YES) return;
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [self reloadFilter];
+    [self.videoCamera startCameraCapture];
+    if(self.saveLocalVideo) [self.movieWriter startRecording];
+    self.isRunning = YES;
+}
+- (void)stop{
+    if (_isRunning == NO) return;
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    [self.videoCamera stopCameraCapture];
+    if(self.saveLocalVideo) [self.movieWriter finishRecording];
+    self.isRunning  = NO;
+}
+-(BOOL)isRunning{
+    return self.isRunning;
 }
 /**
  录制
@@ -172,16 +187,45 @@
     }];
 }
 
-- (void)setPreView:(UIView *)preView {
-    if (self.gpuImageView.superview) [self.gpuImageView removeFromSuperview];
-    [preView insertSubview:self.gpuImageView atIndex:0];
-    self.gpuImageView.frame = CGRectMake(0, 0, preView.frame.size.width, preView.frame.size.height);
-}
+//- (void)setPreView:(UIView *)preView {
+//    if (self.gpuImageView.superview) [self.gpuImageView removeFromSuperview];
+//    [preView insertSubview:self.gpuImageView atIndex:0];
+//    self.gpuImageView.frame = CGRectMake(0, 0, preView.frame.size.width, preView.frame.size.height);
+//}
 
 - (UIView *)preView {
-    return self.gpuImageView.superview;
+    if (_preView == nil) {
+        _preView = [[UIView alloc] init];
+        if (self.gpuImageView.superview) [self.gpuImageView removeFromSuperview];
+        [_preView insertSubview:self.gpuImageView atIndex:0];
+        [_preView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+        [_preView addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
+    }
+    return _preView;
+}
+#pragma mark - <-- KVO -->
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context {
+    if ([object isEqual:self.preView]) {
+        if ([keyPath isEqualToString:@"frame"]) {
+            self.gpuImageView.frame = self.preView.frame;
+        }
+        else if ([keyPath isEqualToString:@"bounds"]) {
+            self.gpuImageView.bounds = self.preView.bounds;
+        }
+    }
+}
+- (void)changeToFrontCamera {
+    self.captureDevicePosition = AVCaptureDevicePositionFront;
+    [self updateConfig:self.configuration];
 }
 
+- (void)changeToBackCamera {
+    self.captureDevicePosition = AVCaptureDevicePositionBack;
+    [self updateConfig:self.configuration];
+}
 - (void)setCaptureDevicePosition:(AVCaptureDevicePosition)captureDevicePosition {
     // 切换摄像头，重置缩放比例
     self.zoomScale = 1.0;
@@ -503,9 +547,9 @@
     __weak typeof(self) weakSelf = self;
     _gpuOutput.pixelBufferCallback = ^(CVPixelBufferRef  _Nullable pixelBufferRef) {
         
-//        if (pixelBufferRef && weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:isBeauty:)]) {
-//            [weakSelf.delegate captureOutput:weakSelf pixelBuffer:pixelBufferRef isBeauty:NO];
-//        }
+        if (pixelBufferRef && weakSelf.delegate && [weakSelf.delegate respondsToSelector:@selector(DVBFVideoCamera:outputSampleBuffer:isBeauty:)]) {
+            [weakSelf.delegate DVBFVideoCamera:weakSelf outputSampleBuffer:pixelBufferRef isBeauty:YES];
+        }
     };
 }
 

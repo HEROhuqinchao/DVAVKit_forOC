@@ -22,12 +22,12 @@ FOUNDATION_EXPORT const unsigned char DVAVKitVersionString[];
 #import <DVAVKit/DVOpenGLKit.h>
 #import <DVAVKit/DVGLKits.h>
 
-//#import <DVAVKit/DVAudioPlayer.h>
-//#import <DVAVKit/DVFFRtmpSocket.h>
-//#import <DVAVKit/FFBuffer.h>
-//#import <DVAVKit/FFFrame.h>
-//#import <DVAVKit/FFH264Encodec.h>
-//#import <DVAVKit/FFUtils.h>
+#import <DVAVKit/DVAudioPlayer.h>
+#import <DVAVKit/DVFFRtmpSocket.h>
+#import <DVAVKit/FFBuffer.h>
+#import <DVAVKit/FFFrame.h>
+#import <DVAVKit/FFH264Encodec.h>
+#import <DVAVKit/FFUtils.h>
 
 #else
 
@@ -40,11 +40,11 @@ FOUNDATION_EXPORT const unsigned char DVAVKitVersionString[];
 #import "DVOpenGLKit.h"
 #import "DVGLKits.h"
 
-//#import "DVAudioPlayer.h"
-//#import "DVFFRtmpSocket.h"
-//#import "FFBuffer.h"
-//#import "FFFrame.h"
-//#import "FFH264Encodec.h"
-//#import "FFUtils.h"
+#import "DVAudioPlayer.h"
+#import "DVFFRtmpSocket.h"
+#import "FFBuffer.h"
+#import "FFFrame.h"
+#import "FFH264Encodec.h"
+#import "FFUtils.h"
 
 #endif

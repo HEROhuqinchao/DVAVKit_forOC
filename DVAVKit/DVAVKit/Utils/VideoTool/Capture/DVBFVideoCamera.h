@@ -12,10 +12,10 @@
 #import "DVVideoConfig.h"
 NS_ASSUME_NONNULL_BEGIN
 @class DVBFVideoCamera;
-/** ADYGPUImageVideoCapture callback videoData - 视频数据处理回调*/
+/** callback videoData - 视频数据处理回调*/
 @protocol DVBFVideoCameraDelegate <NSObject>
-- (void)DVVideoCapture:(DVBFVideoCamera *)capture
-    outputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+- (void)DVBFVideoCamera:(DVBFVideoCamera *)capture
+    outputSampleBuffer:(CVPixelBufferRef)sampleBuffer
                 isBeauty:(BOOL)isBeauty;
 
 @end
@@ -34,22 +34,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The running control start capture or stop capture
- * 正在运行的控件启动捕获或停止捕获
+ * 正在运行的控件启动捕 获或停止捕获
  */
-@property (nonatomic, assign) BOOL running;
-
+@property(nonatomic, assign, readonly) BOOL isRunning;
 /**
  * The preView will show OpenGL ES view
  * 预览将显示OpenGL ES视图
  */
-@property (null_resettable, nonatomic, strong) UIView *preView;
+
+@property(nonatomic, strong, readonly) UIView *preView;
 
 
 /**
  * The captureDevicePosition control camraPosition ,default front
  * 摄像头翻转 - 默认为前置
  */
-//@property (nonatomic, assign) AVCaptureDevicePosition captureDevicePosition;
+@property (nonatomic, assign) AVCaptureDevicePosition captureDevicePosition;
 
 /**
  * The beautyFace control capture shader filter empty or beautiy
@@ -149,8 +149,12 @@ NS_ASSUME_NONNULL_BEGIN
  捕获不稳定。
  
  */
-- (nullable instancetype)initWithVideoConfiguration:(nullable DVVideoConfig *)configuration NS_DESIGNATED_INITIALIZER;
-
+- (nullable instancetype)initWithVideoConfiguration:(nullable DVVideoConfig *)configuration delegate:(id<DVBFVideoCameraDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (void)updateConfig:(DVVideoConfig *)config;
+- (void)start;
+- (void)stop;
+- (void)changeToFrontCamera;
+- (void)changeToBackCamera;
 @end
 
 

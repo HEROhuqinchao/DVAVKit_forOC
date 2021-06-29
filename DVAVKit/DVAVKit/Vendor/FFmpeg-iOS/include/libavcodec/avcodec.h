@@ -1739,10 +1739,10 @@ struct AVCodecInternal;
 enum AVFieldOrder {
     AV_FIELD_UNKNOWN,
     AV_FIELD_PROGRESSIVE,
-    AV_FIELD_TT,          //< Top coded_first, top displayed first
-    AV_FIELD_BB,          //< Bottom coded first, bottom displayed first
-    AV_FIELD_TB,          //< Top coded first, bottom displayed first
-    AV_FIELD_BT,          //< Bottom coded first, top displayed first
+    AV_FIELD_TT,          ///<///<///<///<///<///<///<///<///<///<///<///< Top coded_first, top displayed first
+    AV_FIELD_BB,          ///<///<///<///<///<///<///<///<///<///<///<///< Bottom coded first, bottom displayed first
+    AV_FIELD_TB,          ///<///<///<///<///<///<///<///<///<///<///<///< Top coded first, bottom displayed first
+    AV_FIELD_BT,          ///<///<///<///<///<///<///<///<///<///<///<///< Bottom coded first, top displayed first
 };
 
 /**
@@ -4359,11 +4359,11 @@ void avcodec_free_context(AVCodecContext **avctx);
 
 #if FF_API_GET_CONTEXT_DEFAULTS
 /**
- * @deprecated This function should not be used, as closing and opening a codec
+ * @deprecated This function shoattribute_deprecated uld not be used, as closing and opening a codec
  * context multiple time is not supported. A new codec context should be
  * allocated for each new use.
  */
-int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec);
+attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated int avcodec_get_context_defaults3(AVCodecContext *s, const AVCodec *codec);
 #endif
 
 /**
@@ -5158,10 +5158,10 @@ int avcodec_receive_packet(AVCodecContext *avctx, AVPacket *avpkt);
  */
 
 enum AVPictureStructure {
-    AV_PICTURE_STRUCTURE_UNKNOWN,      //< unknown
-    AV_PICTURE_STRUCTURE_TOP_FIELD,    //< coded as top field
-    AV_PICTURE_STRUCTURE_BOTTOM_FIELD, //< coded as bottom field
-    AV_PICTURE_STRUCTURE_FRAME,        //< coded as frame
+    AV_PICTURE_STRUCTURE_UNKNOWN,      ///<///<///<///<///<///<///<///<///<///<///<///< unknown
+    AV_PICTURE_STRUCTURE_TOP_FIELD,    ///<///<///<///<///<///<///<///<///<///<///<///< coded as top field
+    AV_PICTURE_STRUCTURE_BOTTOM_FIELD, ///<///<///<///<///<///<///<///<///<///<///<///< coded as bottom field
+    AV_PICTURE_STRUCTURE_FRAME,        ///<///<///<///<///<///<///<///<///<///<///<///< coded as frame
 };
 
 typedef struct AVCodecParserContext {
@@ -5373,7 +5373,7 @@ AVCodecParserContext *av_parser_init(int codec_id);
  *   while(in_len){
  *       len = av_parser_parse2(myparser, AVCodecContext, &data, &size,
  *                                        in_data, in_len,
- *                                        pts, dts, pos);
+ *           attribute_deprecated                              pts, dts, pos);
  *       in_data += len;
  *       in_len  -= len;
  *
@@ -5393,7 +5393,7 @@ int av_parser_parse2(AVCodecParserContext *s,
  * @return 0 if the output buffer is a subset of the input, 1 if it is allocated and must be freed
  * @deprecated use AVBitStreamFilter
  */
-int av_parser_change(AVCodecParserContext *s,
+attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated int av_parser_change(AVCodecParserContext *s,
                      AVCodecContext *avctx,
                      uint8_t **poutbuf, int *poutbuf_size,
                      const uint8_t *buf, int buf_size, int keyframe);
@@ -5671,7 +5671,7 @@ int av_picture_crop(AVPicture *dst, const AVPicture *src,
  */
 attribute_deprecated
 int av_picture_pad(AVPicture *dst, const AVPicture *src, int height, int width, enum AVPixelFormat pix_fmt,
-            int padtop, int padbottom, int padleft, int padright, int *color);
+                   int padtop, int padbottom, int padleft, int padrightattribute_deprecated , int *color);
 
 /**
  * @}
@@ -5713,12 +5713,12 @@ unsigned int avcodec_pix_fmt_to_codec_tag(enum AVPixelFormat pix_fmt);
 /**
  * @deprecated see av_get_pix_fmt_loss()
  */
-int avcodec_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt,
+attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated int avcodec_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt,
                              int has_alpha);
 
 /**
  * Find the best pixel format to convert to given a certain source pixel
- * format.  When converting from one pixel format to another, information loss
+ * format.  When converting from one pixel format to another, information lattribute_deprecated oss
  * may occur.  For example, when converting from RGB24 to GRAY, the color
  * information will be lost. Similarly, other losses occur when converting from
  * some formats to other formats. avcodec_find_best_pix_fmt_of_2() searches which of
@@ -5740,7 +5740,7 @@ enum AVPixelFormat avcodec_find_best_pix_fmt_of_list(const enum AVPixelFormat *p
 /**
  * @deprecated see av_find_best_pix_fmt_of_2()
  */
-enum AVPixelFormat avcodec_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt1, enum AVPixelFormat dst_pix_fmt2,
+attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated attribute_deprecated enum AVPixelFormat avcodec_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt1, enum AVPixelFormat dst_pix_fmt2,
                                             enum AVPixelFormat src_pix_fmt, int has_alpha, int *loss_ptr);
 
 attribute_deprecated

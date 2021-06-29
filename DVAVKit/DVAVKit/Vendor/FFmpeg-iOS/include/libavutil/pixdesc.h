@@ -418,7 +418,7 @@ int av_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt,
  * av_get_fix_fmt_loss() informs you about the various types of losses
  * which will occur when converting from one pixel format to another.
  *
- * @param[in] dst_pix_fmt destination pixel format
+ * @param[in] dst_pix_fmt1 destination pixel format
  * @param[in] src_pix_fmt source pixel format
  * @param[in] has_alpha Whether the source pixel format alpha channel is used.
  * @return Combination of flags informing you what kind of losses will occur

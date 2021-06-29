@@ -18,20 +18,22 @@
                        DVVideoEncoderDelegate,
                        DVAudioEncoderDelegate,
                        DVRtmpDelegate,
-                       DVRtmpBufferDelegate>
+                       DVRtmpBufferDelegate,
+                       DVBFVideoCameraDelegate>
 {
     
-    NSTimeInterval timeInterval;//记录当前开始直播时时间戳
-    uint64_t timeStamploc;///本地时钟计时器保存
-    BOOL  isUpDataNTP;/// 更新本地时间
+    NSTimeInterval timeInterval;   ///记录当前开始直播时时间戳
+    uint64_t timeStamploc;          ///本地时钟计时器保存
+    BOOL  isUpDataNTP;             /// 更新本地时间
+    BOOL  isBeauty;                    /// 是否使用美颜相机
 }
 
 @property (nonatomic, strong) dispatch_source_t timer;
 
 @property(nonatomic, strong, readwrite) DVVideoConfig *videoConfig;
 @property(nonatomic, strong, readwrite) DVAudioConfig *audioConfig;
-
-@property(nonatomic, strong, nullable) DVVideoCapture *videoCapture;
+@property(nonatomic, strong, nullable) DVBFVideoCamera *videoBFCapture;//美颜相机采集
+@property(nonatomic, strong, nullable) DVVideoCapture *videoCapture;//原相机采集
 @property(nonatomic, strong, nullable) DVAudioUnit *audioUnit;
 @property(nonatomic, strong, nullable) id<DVVideoEncoder> videoEncoder;
 @property(nonatomic, strong, nullable) id<DVAudioEncoder> audioEncoder;
@@ -54,7 +56,7 @@
 @implementation DVLive
 
 #pragma mark - <-- Initializer -->
-- (instancetype)init {
+- (instancetype)initWithBeauty:(BOOL)beauty {
     self = [super init];
     if (self) {
         [self initLock];
@@ -63,6 +65,7 @@
         timeInterval = 0.0;
         timeStamploc = 0.0;
         isUpDataNTP = NO;
+        isBeauty = beauty;
     }
     return self;
 }
@@ -72,6 +75,11 @@
         //停止定时器
         dispatch_source_cancel(self.timer);
         self.timer = nil;
+    }
+    if (_videoBFCapture) {
+        [_videoBFCapture stop];
+        _videoBFCapture.delegate = nil;
+        _videoBFCapture = nil;
     }
      if (_videoCapture) {
         [_videoCapture stop];
@@ -115,13 +123,21 @@
 
 #pragma mark - <-- Property -->
 - (UIView *)preView {
+    if (isBeauty) {
+        return self.videoBFCapture ? self.videoBFCapture.preView : nil;
+    }
     return self.videoCapture ? self.videoCapture.preView : nil;
 }
 
 - (DVVideoCapture *)camera {
     return self.videoCapture;
 }
-
+-(DVBFVideoCamera *)cameraBF{
+    return self.videoBFCapture;
+}
+-(BOOL)isBeauty{
+    return isBeauty;
+}
 - (BOOL)isLiving {
     BOOL status = NO;
     if (self.videoCapture && self.audioUnit && self.rtmpSocket) {
@@ -129,9 +145,35 @@
                 || self.audioUnit.isRunning
                 || self.rtmpSocket.rtmpStatus == DVRtmpStatus_Connected;
     }
+    if (isBeauty) {
+        if (self.videoBFCapture && self.audioUnit && self.rtmpSocket) {
+            status = self.videoBFCapture.isRunning
+                    || self.audioUnit.isRunning
+                    || self.rtmpSocket.rtmpStatus == DVRtmpStatus_Connected;
+        }
+    }
     return status;
 }
 
+/**
+ * 切换手机摄像头 默认前置后置切换
+ * 切换前置
+ */
+- (void)changeToFrontCamera{
+    if (self.isBeauty) {
+        [self.cameraBF changeToFrontCamera];
+    }else{
+        [self.camera changeToFrontCamera];
+    }
+}
+///  切换后置
+- (void)changeToBackCamera{
+    if (self.isBeauty) {
+        [self.cameraBF changeToBackCamera];
+    }else{
+        [self.camera changeToBackCamera];
+    }
+}
 
 - (dispatch_queue_t)fileQueue {
     if (!_fileQueue) {
@@ -182,15 +224,23 @@
     _videoConfig = videoConfig;
 
     // 1.初始化摄像头
-    if (!self.videoCapture) {
-        self.videoCapture = [[DVVideoCapture alloc] initWithConfig:videoConfig delegate:self];
-        [self.videoCapture updateCamera:^(DVVideoCamera * _Nonnull camera) {
-            camera.stabilizationMode = AVCaptureVideoStabilizationModeAuto;
-        }];
-    } else {
-        [self.videoCapture updateConfig:videoConfig];
+    if (isBeauty) {
+        if (!self.videoBFCapture) {
+            self.videoBFCapture = [[DVBFVideoCamera alloc] initWithVideoConfiguration:videoConfig delegate:self];
+        } else {
+            [self.videoBFCapture updateConfig:videoConfig];
+        }
+    }else{
+        if (!self.videoCapture) {
+            self.videoCapture = [[DVVideoCapture alloc] initWithConfig:videoConfig delegate:self];
+            [self.videoCapture updateCamera:^(DVVideoCamera * _Nonnull camera) {
+                camera.stabilizationMode = AVCaptureVideoStabilizationModeAuto;
+            }];
+        } else {
+            [self.videoCapture updateConfig:videoConfig];
+        }
     }
-    
+
     
     // 2.初始化视频编码器
     if (self.videoEncoder) {
@@ -268,8 +318,11 @@
         [self printfLog:@"推流开启失败, 请先设置 VideoConfig 和 AudioConfig"];
         return;
     }
-    
-    if (self.videoCapture) [self.videoCapture start];
+    if (isBeauty) {
+        if (self.videoBFCapture) [self.videoBFCapture start];
+    }else{
+        if (self.videoCapture) [self.videoCapture start];
+    }
     if (self.audioUnit) [self.audioUnit start];
     if (!self.timer) [self upDataNTPTime];
 }
@@ -279,8 +332,11 @@
         [self printfLog:@"推流关闭失败, 请先设置 VideoConfig 和 AudioConfig"];
         return;
     }
-    
-    if (self.videoCapture) [self.videoCapture stop];
+    if (isBeauty) {
+        if (self.videoBFCapture) [self.videoBFCapture stop];
+    }else{
+        if (self.videoCapture) [self.videoCapture stop];
+    }
     if (self.audioUnit) [self.audioUnit stop];
     //停止定时器
     dispatch_source_cancel(self.timer);
@@ -523,6 +579,12 @@
 
 
 #pragma mark - <-- Capture Delegate -->
+-(void)DVBFVideoCamera:(DVBFVideoCamera *)capture outputSampleBuffer:(CVPixelBufferRef)sampleBuffer isBeauty:(BOOL)isBeauty{
+    if (self.videoEncoder) {
+        NSNumber *timeStampNum = [NSNumber numberWithUnsignedLongLong:RTMP_TIMESTAMP_NOW];
+        [self.videoEncoder encodeVideoPxBuffer:sampleBuffer userInfo:(__bridge void *)timeStampNum];
+    }
+}
 - (void)DVVideoCapture:(DVVideoCapture *)capture
     outputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                  error:(DVVideoError *)error {

@@ -217,9 +217,11 @@
 #pragma mark - <-- Method -->
 - (void)encodeVideoBuffer:(CMSampleBufferRef)buffer userInfo:(void *)userInfo {
     if (!_sessionRef) return;
-        
     // 抽离出未压缩的源数据
     CVImageBufferRef imageBufRef = (CVImageBufferRef)CMSampleBufferGetImageBuffer(buffer);
+    [self encodeVideoPxBuffer:imageBufRef userInfo:userInfo];
+}
+- (void)encodeVideoPxBuffer:(CVImageBufferRef)imageBufRef userInfo:(void *)userInfo {
     if (!imageBufRef) return;
     
     // 帧时间，如果不设置会导致时间轴过长

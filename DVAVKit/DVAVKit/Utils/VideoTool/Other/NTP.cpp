@@ -94,7 +94,8 @@ int getNtpTime(struct hostent* phost,struct timeval *ptimeval)
     addr_dst.sin_family = AF_INET;
     memcpy(&(addr_dst.sin_addr.s_addr), phost->h_addr_list[0], 4);
     addr_dst.sin_port = htons(123);//ntp默认端口123
- 
+//    char *ip = inet_ntoa(*(in_addr *)phost->h_addr_list[0]);
+    
     if(-1==(sockfd = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP)))//创建UDP socket
     {
         debugpri("create socket error!\n");
@@ -108,7 +109,6 @@ int getNtpTime(struct hostent* phost,struct timeval *ptimeval)
         close(sockfd);
         return -1;
     }
-    
     ret = connect(sockfd, (struct sockaddr*)&addr_dst, addr_len);//连接NTP服务器
     if(-1==ret)
     {

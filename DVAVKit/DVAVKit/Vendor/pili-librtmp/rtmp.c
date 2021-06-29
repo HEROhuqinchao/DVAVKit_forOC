@@ -691,7 +691,7 @@ int PILI_RTMP_SetupURL(PILI_RTMP *r, const char *url, RTMPError *error) {
                 if (domain->av_len == 0) {
                     domain = &r->Link.hostname;
                 }
-                if (r->Link.port = 0) {
+                if (r->Link.port == 0) {
                     r->Link.port = 1935;
                 }
                 len = domain->av_len + r->Link.app.av_len + sizeof("rtmpte://:65535/");
@@ -3507,7 +3507,7 @@ static void
     while (sum != 0) {
         e = sum >> 2 & 3;
         for (p = n - 1; p > 0; p--)
-            z = v[p - 1], y = v[p] -= MX;
+            (void)(z = v[p - 1]), y = v[p] -= MX;
         z = v[n - 1];
         y = v[0] -= MX;
         sum -= DELTA;

@@ -66,6 +66,14 @@
 		DA1098302681812F00E5079D /* NTP.hpp in Headers */ = {isa = PBXBuildFile; fileRef = DA10982E2681812F00E5079D /* NTP.hpp */; };
 		DA1098332681817E00E5079D /* NTPManger.h in Headers */ = {isa = PBXBuildFile; fileRef = DA1098312681817E00E5079D /* NTPManger.h */; };
 		DA1098342681817E00E5079D /* NTPManger.mm in Sources */ = {isa = PBXBuildFile; fileRef = DA1098322681817E00E5079D /* NTPManger.mm */; };
+		DA3F5610268AFBE700743CFE /* DVBFVideoCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = DA3F560E268AFBE700743CFE /* DVBFVideoCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DA3F5611268AFBE700743CFE /* DVBFVideoCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = DA3F560F268AFBE700743CFE /* DVBFVideoCamera.m */; };
+		DA3F5619268AFC5E00743CFE /* ADYGPUImageEmptyFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = DA3F5613268AFC5E00743CFE /* ADYGPUImageEmptyFilter.m */; };
+		DA3F561A268AFC5E00743CFE /* GPUImagePixelBufferOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = DA3F5614268AFC5E00743CFE /* GPUImagePixelBufferOutput.h */; };
+		DA3F561B268AFC5E00743CFE /* ADYGPUImageBeautyFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = DA3F5615268AFC5E00743CFE /* ADYGPUImageBeautyFilter.m */; };
+		DA3F561C268AFC5E00743CFE /* GPUImagePixelBufferOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = DA3F5616268AFC5E00743CFE /* GPUImagePixelBufferOutput.m */; };
+		DA3F561D268AFC5E00743CFE /* ADYGPUImageEmptyFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = DA3F5617268AFC5E00743CFE /* ADYGPUImageEmptyFilter.h */; };
+		DA3F561E268AFC5E00743CFE /* ADYGPUImageBeautyFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = DA3F5618268AFC5E00743CFE /* ADYGPUImageBeautyFilter.h */; };
 		DA610CFF266E29F00070AEC7 /* ADYAdjustFocusView.h in Headers */ = {isa = PBXBuildFile; fileRef = DA610CFD266E29F00070AEC7 /* ADYAdjustFocusView.h */; };
 		DA610D00266E29F00070AEC7 /* ADYAdjustFocusView.m in Sources */ = {isa = PBXBuildFile; fileRef = DA610CFE266E29F00070AEC7 /* ADYAdjustFocusView.m */; };
 		DA74746526899ED700DA9F83 /* ADYHardwareAudioEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = DA74746226899ED600DA9F83 /* ADYHardwareAudioEncoder.m */; };
@@ -333,6 +341,30 @@
 		FFEE33AD23C3188800022E68 /* G726Encodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFEE33A723C3188800022E68 /* G726Encodec.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DA3F560A268AFBD500743CFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCF1A33414DDB1EC00852800;
+			remoteInfo = GPUImage;
+		};
+		DA3F560C268AFBD500743CFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCE209E51943F20C002FEED8;
+			remoteInfo = GPUImageFramework;
+		};
+		DA3F561F268AFCA000743CFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BCE209E41943F20C002FEED8;
+			remoteInfo = GPUImageFramework;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		FFEE33D023C3205700022E68 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -394,6 +426,15 @@
 		DA10982E2681812F00E5079D /* NTP.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NTP.hpp; sourceTree = "<group>"; };
 		DA1098312681817E00E5079D /* NTPManger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NTPManger.h; sourceTree = "<group>"; };
 		DA1098322681817E00E5079D /* NTPManger.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NTPManger.mm; sourceTree = "<group>"; };
+		DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPUImage.xcodeproj; path = ../GPUImage/GPUImage.xcodeproj; sourceTree = "<group>"; };
+		DA3F560E268AFBE700743CFE /* DVBFVideoCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVBFVideoCamera.h; sourceTree = "<group>"; };
+		DA3F560F268AFBE700743CFE /* DVBFVideoCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVBFVideoCamera.m; sourceTree = "<group>"; };
+		DA3F5613268AFC5E00743CFE /* ADYGPUImageEmptyFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADYGPUImageEmptyFilter.m; sourceTree = "<group>"; };
+		DA3F5614268AFC5E00743CFE /* GPUImagePixelBufferOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImagePixelBufferOutput.h; sourceTree = "<group>"; };
+		DA3F5615268AFC5E00743CFE /* ADYGPUImageBeautyFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADYGPUImageBeautyFilter.m; sourceTree = "<group>"; };
+		DA3F5616268AFC5E00743CFE /* GPUImagePixelBufferOutput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUImagePixelBufferOutput.m; sourceTree = "<group>"; };
+		DA3F5617268AFC5E00743CFE /* ADYGPUImageEmptyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADYGPUImageEmptyFilter.h; sourceTree = "<group>"; };
+		DA3F5618268AFC5E00743CFE /* ADYGPUImageBeautyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADYGPUImageBeautyFilter.h; sourceTree = "<group>"; };
 		DA610CFD266E29F00070AEC7 /* ADYAdjustFocusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADYAdjustFocusView.h; sourceTree = "<group>"; };
 		DA610CFE266E29F00070AEC7 /* ADYAdjustFocusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADYAdjustFocusView.m; sourceTree = "<group>"; };
 		DA74746226899ED600DA9F83 /* ADYHardwareAudioEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADYHardwareAudioEncoder.m; sourceTree = "<group>"; };
@@ -854,6 +895,28 @@
 			path = Decoder;
 			sourceTree = "<group>";
 		};
+		DA3F5605268AFBD500743CFE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DA3F560B268AFBD500743CFE /* libGPUImage.a */,
+				DA3F560D268AFBD500743CFE /* GPUImage.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DA3F5612268AFC5E00743CFE /* BeautyFilter */ = {
+			isa = PBXGroup;
+			children = (
+				DA3F5618268AFC5E00743CFE /* ADYGPUImageBeautyFilter.h */,
+				DA3F5615268AFC5E00743CFE /* ADYGPUImageBeautyFilter.m */,
+				DA3F5617268AFC5E00743CFE /* ADYGPUImageEmptyFilter.h */,
+				DA3F5613268AFC5E00743CFE /* ADYGPUImageEmptyFilter.m */,
+				DA3F5614268AFC5E00743CFE /* GPUImagePixelBufferOutput.h */,
+				DA3F5616268AFC5E00743CFE /* GPUImagePixelBufferOutput.m */,
+			);
+			path = BeautyFilter;
+			sourceTree = "<group>";
+		};
 		DA7474672689C2A300DA9F83 /* NTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -1263,6 +1326,7 @@
 		FFEE2D7523C2D44D00022E68 = {
 			isa = PBXGroup;
 			children = (
+				DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */,
 				FFEE2D8123C2D44D00022E68 /* DVAVKit */,
 				3E28391F2436574D00EC34A4 /* DVAVKitBundle */,
 				FFEE2D8023C2D44D00022E68 /* Products */,
@@ -1450,6 +1514,8 @@
 		FFEE2F7623C2D6D600022E68 /* Capture */ = {
 			isa = PBXGroup;
 			children = (
+				DA3F560E268AFBE700743CFE /* DVBFVideoCamera.h */,
+				DA3F560F268AFBE700743CFE /* DVBFVideoCamera.m */,
 				FFEE2F7923C2D6D600022E68 /* DVVideoCapture.h */,
 				FFEE2F7723C2D6D600022E68 /* DVVideoCapture.m */,
 				FFEE2F7A23C2D6D600022E68 /* DVVideoCamera.h */,
@@ -1674,6 +1740,7 @@
 		FFEE304B23C2DB5D00022E68 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				DA3F5612268AFC5E00743CFE /* BeautyFilter */,
 				FF81E6F423C4528200FBD51D /* Live */,
 				FFEE2F7223C2D6D600022E68 /* VideoTool */,
 				FFEE2F8823C2D6D700022E68 /* AudioTool */,
@@ -1713,6 +1780,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA3F5610268AFBE700743CFE /* DVBFVideoCamera.h in Headers */,
 				FF7FA90824419EA300579EC6 /* jni.h in Headers */,
 				FF7FA90624419EA300579EC6 /* avfft.h in Headers */,
 				FF7FA8E024419EA300579EC6 /* rc4.h in Headers */,
@@ -1813,6 +1881,7 @@
 				FF7FA8B124419EA300579EC6 /* version.h in Headers */,
 				FF7FA8F224419EA300579EC6 /* hash.h in Headers */,
 				FF7FA90324419EA300579EC6 /* xvmc.h in Headers */,
+				DA3F561D268AFC5E00743CFE /* ADYGPUImageEmptyFilter.h in Headers */,
 				FFC99E442432D56500A2D2D6 /* FFOutFormatContext+IO.h in Headers */,
 				FF7FA8F624419EA300579EC6 /* version.h in Headers */,
 				FF7FA8CF24419EA300579EC6 /* hwcontext_dxva2.h in Headers */,
@@ -1880,6 +1949,7 @@
 				FF7FA8DE24419EA300579EC6 /* macros.h in Headers */,
 				FF7FA8AE24419EA300579EC6 /* fifo.h in Headers */,
 				FF7FA8D424419EA300579EC6 /* hwcontext_drm.h in Headers */,
+				DA3F561E268AFC5E00743CFE /* ADYGPUImageBeautyFilter.h in Headers */,
 				DA610CFF266E29F00070AEC7 /* ADYAdjustFocusView.h in Headers */,
 				3E1482942428D4920067FB0F /* DVLive.h in Headers */,
 				FF93DD9D2435BDBF00736A45 /* DVGLRenderLayer.h in Headers */,
@@ -1915,6 +1985,7 @@
 				FF7FA90B24419EA300579EC6 /* vorbis_parser.h in Headers */,
 				FF93DD972435BDBF00736A45 /* DVGLPNGLayer.h in Headers */,
 				FF7FA8CE24419EA300579EC6 /* sha512.h in Headers */,
+				DA3F561A268AFC5E00743CFE /* GPUImagePixelBufferOutput.h in Headers */,
 				FF93DD9B2435BDBF00736A45 /* GLKTextureLoader+DVGL.h in Headers */,
 				FF7FA8F724419EA300579EC6 /* avdevice.h in Headers */,
 				FF7FA8B824419EA300579EC6 /* sha.h in Headers */,
@@ -1958,6 +2029,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DA3F5620268AFCA000743CFE /* PBXTargetDependency */,
 			);
 			name = DVAVKit;
 			productName = MyAVKit;
@@ -1996,6 +2068,12 @@
 			mainGroup = FFEE2D7523C2D44D00022E68;
 			productRefGroup = FFEE2D8023C2D44D00022E68 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DA3F5605268AFBD500743CFE /* Products */;
+					ProjectRef = DA3F5604268AFBD500743CFE /* GPUImage.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				FFEE2D7E23C2D44D00022E68 /* DVAVKit */,
@@ -2004,6 +2082,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DA3F560B268AFBD500743CFE /* libGPUImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGPUImage.a;
+			remoteRef = DA3F560A268AFBD500743CFE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA3F560D268AFBD500743CFE /* GPUImage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = GPUImage.framework;
+			remoteRef = DA3F560C268AFBD500743CFE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3E28391C2436574C00EC34A4 /* Resources */ = {
@@ -2088,6 +2183,7 @@
 				FFC99E632432F87C00A2D2D6 /* NSMutableArray+FFBuffer.m in Sources */,
 				FFEE300D23C2D6D700022E68 /* NSMutableArray+DVRtmpBuffer.m in Sources */,
 				FFEE300823C2D6D700022E68 /* DVRtmpError.m in Sources */,
+				DA3F5619268AFC5E00743CFE /* ADYGPUImageEmptyFilter.m in Sources */,
 				FFEE2FEB23C2D6D700022E68 /* DVAudioComponentDesc.m in Sources */,
 				FFEE2FC923C2D6D700022E68 /* NSNumber+DVAMF.m in Sources */,
 				FFEE300A23C2D6D700022E68 /* DVRtmpBuffer.m in Sources */,
@@ -2105,6 +2201,7 @@
 				FFEE302823C2D8B100022E68 /* rtmp.c in Sources */,
 				FF93DD9E2435BDBF00736A45 /* DVGLContextLayer.m in Sources */,
 				FFEE2FD623C2D6D700022E68 /* DVFlv.m in Sources */,
+				DA3F561C268AFC5E00743CFE /* GPUImagePixelBufferOutput.m in Sources */,
 				FFEE2FFC23C2D6D700022E68 /* DVAudioQueue.m in Sources */,
 				FFEE2FC723C2D6D700022E68 /* NSString+DVAMF.m in Sources */,
 				FFEE2FD923C2D6D700022E68 /* DVVideoCapture.m in Sources */,
@@ -2127,6 +2224,7 @@
 				DA1098342681817E00E5079D /* NTPManger.mm in Sources */,
 				FFEE33AD23C3188800022E68 /* G726Encodec.cpp in Sources */,
 				FFEE2FD723C2D6D700022E68 /* DVVideoConfig.m in Sources */,
+				DA3F561B268AFC5E00743CFE /* ADYGPUImageBeautyFilter.m in Sources */,
 				FFEE300423C2D6D700022E68 /* FFRtmp.cpp in Sources */,
 				FFEE2FE923C2D6D700022E68 /* DVAudioStreamBaseDesc.m in Sources */,
 				FFC99E5F2432F79700A2D2D6 /* FFBuffer.m in Sources */,
@@ -2141,6 +2239,7 @@
 				3E5C7679242683EC004002B3 /* DVLivePlayer.m in Sources */,
 				3E5C768F2427D6F8004002B3 /* DVVideoH264HardwareDecoder.m in Sources */,
 				FFEE2FDF23C2D6D700022E68 /* DVVideoH264HardwareEncoder.m in Sources */,
+				DA3F5611268AFBE700743CFE /* DVBFVideoCamera.m in Sources */,
 				3E049311243E0FB7001BCCE7 /* DVVideoPacket.m in Sources */,
 				FFAEB250243C5ABD00C27A36 /* DVAudioPacket.m in Sources */,
 				FFD4B6BB23C338E4009EFF20 /* DVAudioPlayer.m in Sources */,
@@ -2152,6 +2251,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DA3F5620268AFCA000743CFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = GPUImageFramework;
+			targetProxy = DA3F561F268AFCA000743CFE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3E2839222436574D00EC34A4 /* Debug */ = {
@@ -2247,7 +2354,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2302,7 +2409,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2333,7 +2440,7 @@
 				);
 				INFOPLIST_FILE = DVAVKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2375,7 +2482,7 @@
 				);
 				INFOPLIST_FILE = DVAVKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
